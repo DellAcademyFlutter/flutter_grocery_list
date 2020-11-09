@@ -23,10 +23,9 @@ class Cart extends ChangeNotifier{
 
   /// Realiza a remoção do item
   removeItemList(int index){
-    cartList.removeAt(index);
     double valueToRemove = cartList[index].value;
     totalValue -= valueToRemove;
-
+    cartList.removeAt(index);
     notifyListeners();
   }
 

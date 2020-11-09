@@ -21,9 +21,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    // Adiciona, por padrao, um item leite.
-    cart.cartList.add(
-        Item(id: cart.cartList.length, name: "Leite", qtd: 1, value: 3.50));
   }
 
   @override
@@ -150,13 +147,13 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
-
                   Navigator.of(context)
                       .push(
                         MaterialPageRoute(
                           builder: (_) => CreateItem(null),
                         ),
                       );
+
               },
               tooltip: 'Add',
               child: Icon(Icons.add),
