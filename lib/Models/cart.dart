@@ -25,6 +25,7 @@ class Cart extends ChangeNotifier{
   removeItemList(int index){
     double valueToRemove = cartList[index].value;
     totalValue -= valueToRemove;
+
     cartList.removeAt(index);
     notifyListeners();
   }
@@ -33,7 +34,7 @@ class Cart extends ChangeNotifier{
   updateItem(Item editedItem){
     //Calcula o index
     final index = cartList.indexOf(editedItem);
-    removeItemList(index);
+    cartList.removeAt(index);
     cartList.insert(index, editedItem);
 
     notifyListeners();

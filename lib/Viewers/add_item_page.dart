@@ -74,6 +74,7 @@ class _CreateItemState extends State<CreateItem> {
                           final editedItem = Item(
                               id: widget.cart.cartList[widget.indexEditedItem].id,
                               name: itemName,
+                              qtd: widget.cart.cartList[widget.indexEditedItem].qtd,
                               value: 3.50);
 
                           widget.cart.updateItem(editedItem);
