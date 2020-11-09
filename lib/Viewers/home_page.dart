@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Viewers/add_item_page.dart';
 import 'package:flutter_grocery_list/Models/item.dart';
 import 'package:get_it/get_it.dart';
@@ -13,128 +14,115 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final item = GetIt.I<Item>();
-  var editText = TextEditingController();
+  final cart = GetIt.I<Cart>();
 
   @override
   void initState() {
     super.initState();
-    // Adiciona, por padrao, um item leite.
-    item.cartList.add(Item(
-        id: item.cartList.length,
-        name: "Leite",
-        description: "Leite integral",
-        value: 3.50));
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: item,
-      builder: (context, w) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(widget.title),
-            actions: <Widget>[
-              Container(
-                  width: 40,
-                  height: 40,
-                  alignment: Alignment.centerLeft,
-                  child: Text("${item.cartList.length}", style: TextStyle(fontSize: 20),)),
-              TesteIsrael()
-            ],
-          ),
-          body: Center(
-            child: ListView.builder(
-              itemCount: item.cartList.length,
-              itemBuilder: (context, index) {
-                //Dismissible é um widjet que adiciona os comportamentos de slide
-                return Dismissible(
-                  key: Key(item.cartList[index].name),
-                  child: Card(
-                      child: ListTile(
-                        title: Text('${item.cartList[index].name}'),
-                        subtitle: Text('${item.cartList[index].description}'),
-                        trailing: Text('R\$ ${item.cartList[index].value}'),
-                      ),
-                      color: Colors.lightGreenAccent),
-
-                  //É o widget que fica visível quando deslizamos o item da lista para a direita.
-                  background: slideRightBackground(),
-
-                  // SecondaryBackground: É o outro lado do deslizamento.
-                  secondaryBackground: slideLeftBackground(),
-
-                  // ignore: missing_return
-                  confirmDismiss: (direction) async {
-                    if (direction == DismissDirection.endToStart) {
-                      final bool resp = await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: Text(
-                                  "Você gostaria de remover: ${item.cartList[index]} do carrinho?"),
-                              actions: <Widget>[
-                                FlatButton(
-                                  child: Text(
-                                    "Cancelar",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                                FlatButton(
-                                  child: Text(
-                                    "Remover",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                  onPressed: () {
-                                    //Remove o lista no index selecionado
-                                    item.removeItemList(index);
-
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          });
-                      return resp;
-                    } else {
-                      // Navega para a pagina de edicao
-                      setState(() {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                CreateItem(cart: item.cartList, item: item.cartList[index]),
-                          ),
-                        );
-                      });
-                    }
-                  },
-                );
-              },
+        animation: cart,
+        builder: (context, w) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.title),
+              actions: <Widget>[CartTotalValue()],
             ),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              setState(() {
+            body: Center(
+                child: cart.itemList.length != 0
+                    ? ListView.builder(
+                        itemCount: cart.itemList.length,
+                        itemBuilder: (context, index) {
+                          return Dismissible(
+                            // Adiciona comportamento slide
+                            key: Key(cart.itemList[index].name),
+                            child: Card(
+                                child: ListTile(
+                                  title: Text(
+                                    '${cart.itemList[index].name}',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  subtitle: Text(
+                                    '${cart.itemList[index].description}',
+                                    style: TextStyle(fontSize: 15),
+                                  ),
+                                  trailing:
+                                      Text('R\$ ${cart.itemList[index].value}'),
+                                ),
+                                color: Colors.lightGreenAccent),
+
+                            background: slideRightBackground(), // Slide right
+                            secondaryBackground:
+                                slideLeftBackground(), // Slide left
+
+                            // ignore: missing_return
+                            confirmDismiss: (direction) async {
+                              if (direction == DismissDirection.endToStart) {
+                                final bool resp = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: Text(
+                                            "Você gostaria de remover: ${cart.itemList[index]} do carrinho?"),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text(
+                                              "Cancelar",
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          FlatButton(
+                                            child: Text(
+                                              "Remover",
+                                              style:
+                                                  TextStyle(color: Colors.red),
+                                            ),
+                                            onPressed: () {
+                                              //Remove o lista no index selecionado
+                                              cart.removeItem(index);
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                                return resp;
+                              } else {
+                                // Navega para a pagina de edicao
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        CreateItem(item: cart.itemList[index]),
+                                  ),
+                                );
+                              }
+                            },
+                          );
+                        },
+                      )
+                    : EmptyCart()),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => CreateItem(
-                      cart: item.cartList,
                       item: null,
                     ),
                   ),
-                ).whenComplete(() => setState(()=>null));
-              });
-            },
-            tooltip: 'Add',
-            child: Icon(Icons.add),
-          ),
-        );
-      }
-    );
+                );
+              },
+              tooltip: 'Add',
+              child: Icon(Icons.add),
+            ),
+          );
+        });
   }
 }
 
@@ -200,12 +188,41 @@ Widget slideLeftBackground() {
   );
 }
 
-class TesteIsrael extends StatelessWidget {
-  final item = GetIt.I<Item>();
+/// Esta classe retorna um widget mensagem com o valor total do carrinho.
+class CartTotalValue extends StatelessWidget {
+  final cart = GetIt.I<Cart>();
 
   @override
   Widget build(BuildContext context) {
-    return Container(child: Text("${item.cartList.length}", style: TextStyle(fontSize: 25, color: Colors.black),),);
+    return Container(
+        alignment: Alignment.centerLeft,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text(
+              "Qtd. produtos: ${cart.itemList.length}",
+              style: TextStyle(fontSize: 15, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              "Valor total: R\$ ${cart.totalValue}",
+              style: TextStyle(fontSize: 15, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ));
   }
 }
 
+/// Esta classe retorna um widget mensagem de carrinho vazio.
+class EmptyCart extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Text(
+        "Seu carrinho está vazio.",
+        style: TextStyle(fontSize: 25, color: Colors.black),
+      ),
+    );
+  }
+}

@@ -11,14 +11,6 @@ class Item extends ChangeNotifier{
   String description;
   double value;
 
-  List<Item> cartList = List();
-
-  removeItemList(int index){
-    cartList.removeAt(index);
-
-    notifyListeners();
-  }
-
   /// Disjuncao logica (Equals): compara se dois objetos [Item] sao iguais.
   @override
   bool operator == (Object other) =>

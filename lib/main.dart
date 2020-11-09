@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/item.dart';
 import 'package:flutter_grocery_list/Viewers/home_page.dart';
 import 'package:get_it/get_it.dart';
+import 'Models/cart.dart';
 
 void main() {
-  GetIt.I.registerSingleton<Item>(Item());
+  // Injecoes de dependencia
+  GetIt.I.registerSingleton<Cart>(Cart()); // Um Singleton de [Cart].
 
+  // Execucao do aplicativo
   runApp(MyApp());
 }
 

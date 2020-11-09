@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_grocery_list/Models/cart.dart';
+import 'package:get_it/get_it.dart';
 import '../Models/item.dart';
 
 /// Esta classe implementa uma tela de adicao/edicao de [Item].
 class CreateItem extends StatefulWidget {
-  CreateItem({this.cart, this.item});
+  CreateItem({this.item});
 
-  final List<Item> cart;
+  final cart = GetIt.I<Cart>();
   final Item item;
 
   @override
@@ -68,20 +70,19 @@ class _CreateItemState extends State<CreateItem> {
                               id: widget.item.id,
                               name: itemName,
                               description: 'padrão',
-                              value: 3.50);
+                              value: 3.50
+                          );
 
-                          final index = widget.cart.indexOf(editedItem);
-                          widget.cart.removeAt(index);
-                          widget.cart.insert(index, editedItem);
+                          widget.cart.updateItem(editedItem);
                         } else {
                           // Realiza a adicao do item
                           Item newItem = Item(
-                            id: widget.cart.length + 1,
+                            id: widget.cart.itemList.length + 1,
                             name: itemName,
-                            description: 'padrão',
+                            description: 'descrição padrão',
                             value: 3.50,
                           );
-                          widget.cart.add(newItem);
+                          widget.cart.addItem(newItem);
                         }
                         Navigator.of(context).pop();
                       }
