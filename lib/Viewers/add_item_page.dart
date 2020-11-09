@@ -4,21 +4,18 @@ import 'package:get_it/get_it.dart';
 import '../Models/item.dart';
 
 /// Esta classe implementa uma tela de adicao/edicao de [Item].
-class CreateItem extends StatefulWidget {
-  CreateItem(this.indexEditedItem);
+class CreateEditItemPage extends StatefulWidget {
+  CreateEditItemPage({this.item});
 
-  ///Carrinho
   final cart = GetIt.I<Cart>();
-
-  ///Posicao para a edicao
-  int indexEditedItem;
+  final Item item;
 
   @override
-  _CreateItemState createState() => _CreateItemState();
+  _CreateEditItemPageState createState() => _CreateEditItemPageState();
 }
 
 /// [State] da pagina de adicao/edicao de [Item].
-class _CreateItemState extends State<CreateItem> {
+class _CreateEditItemPageState extends State<CreateEditItemPage> {
   TextEditingController textEditingController;
   String textHint = 'Adicionar Item';
   String itemName = '';
@@ -27,10 +24,9 @@ class _CreateItemState extends State<CreateItem> {
   @override
   // Inicializa o texto de edicao com base no estado 'edicao' ou 'adicao'.
   void initState() {
-    isEdit = widget.indexEditedItem != null;
+    isEdit = widget.item != null;
     textEditingController =
-        TextEditingController(text: (widget.indexEditedItem != null)?
-        widget.cart.cartList[widget.indexEditedItem].name ?? '' : '');
+        TextEditingController(text: widget?.item?.name ?? '');
     // Altera a label do botao de adicao/edicao
     setState(() {
       if (isEdit) {
@@ -47,6 +43,7 @@ class _CreateItemState extends State<CreateItem> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Item'),
+        backgroundColor: Colors.amber,
         centerTitle: true,
       ),
       body: Padding(
@@ -70,17 +67,21 @@ class _CreateItemState extends State<CreateItem> {
                     ? () {
                         if (isEdit) {
                           // Realiza a edicao do item
-
                           final editedItem = Item(
-                              id: widget.cart.cartList[widget.indexEditedItem].id,
+                              id: widget.item.id,
                               name: itemName,
-                              qtd: widget.cart.cartList[widget.indexEditedItem].qtd,
-                              value: 3.50);
+                              unitedValue: 3.0
+                          );
 
                           widget.cart.updateItem(editedItem);
                         } else {
                           // Realiza a adicao do item
-                          widget.cart.addItem(itemName);
+                          Item newItem = Item(
+                            id: widget.cart.cartList.length + 1,
+                            name: itemName,
+                            unitedValue: 3.0,
+                          );
+                          widget.cart.addItem(newItem);
                         }
                         Navigator.of(context).pop();
                       }
@@ -91,7 +92,7 @@ class _CreateItemState extends State<CreateItem> {
                     color: Colors.white,
                   ),
                 ),
-                color: Colors.blue,
+                color: Colors.amber,
               )
             ],
           ),
