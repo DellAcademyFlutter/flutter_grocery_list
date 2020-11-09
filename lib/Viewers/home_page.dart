@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Viewers/add_item_page.dart';
 import 'package:flutter_grocery_list/Models/item.dart';
+import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:get_it/get_it.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -28,7 +30,14 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (context, w) {
           return Scaffold(
             appBar: AppBar(
-              title: Text(widget.title),
+              title: Row(
+                children: <Widget>[
+                  Text(widget.title),
+                  InkWell(
+                      onTap: ()=> GetIt.I<ThemeModel>().changeTheme(),
+                      child: Icon(CupertinoIcons.brightness_solid))
+                ],
+              ),
               actions: <Widget>[CartTotalValue()],
             ),
             body: Center(
