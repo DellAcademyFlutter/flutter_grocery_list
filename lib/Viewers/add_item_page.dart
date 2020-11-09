@@ -4,18 +4,18 @@ import 'package:get_it/get_it.dart';
 import '../Models/item.dart';
 
 /// Esta classe implementa uma tela de adicao/edicao de [Item].
-class CreateItem extends StatefulWidget {
-  CreateItem({this.item});
+class CreateEditItemPage extends StatefulWidget {
+  CreateEditItemPage({this.item});
 
   final cart = GetIt.I<Cart>();
   final Item item;
 
   @override
-  _CreateItemState createState() => _CreateItemState();
+  _CreateEditItemPageState createState() => _CreateEditItemPageState();
 }
 
 /// [State] da pagina de adicao/edicao de [Item].
-class _CreateItemState extends State<CreateItem> {
+class _CreateEditItemPageState extends State<CreateEditItemPage> {
   TextEditingController textEditingController;
   String textHint = 'Adicionar Item';
   String itemName = '';

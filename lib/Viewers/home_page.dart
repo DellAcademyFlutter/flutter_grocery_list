@@ -17,10 +17,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final cart = GetIt.I<Cart>();
+  Color appBarColor;
 
   @override
   void initState() {
     super.initState();
+    appBarColor = Colors.blue;
   }
 
   @override
@@ -33,95 +35,35 @@ class _MyHomePageState extends State<MyHomePage> {
               title: Row(
                 children: <Widget>[
                   Text(widget.title),
-                  InkWell(
-                      onTap: ()=> GetIt.I<ThemeModel>().changeTheme(),
-                      child: Icon(CupertinoIcons.brightness_solid))
+                  ChangeTheme(),
                 ],
               ),
-              actions: <Widget>[CartTotalValue()],
+              backgroundColor:
+                  cart.hasSelectedItems() ? Colors.blue[900] : Colors.blue,
+              actions: <Widget>[
+                cart.hasSelectedItems()
+                    ? Row(
+                        children: [
+                          CheckSelectedItems(),
+                          SizedBox(width: 20),
+                          RemoveSelectedItems(),
+                        ],
+                      )
+                    : CartInfos()
+              ],
             ),
             body: Center(
                 child: cart.itemList.length != 0
                     ? ListView.builder(
                         itemCount: cart.itemList.length,
-                        itemBuilder: (context, index) {
-                          return Dismissible(
-                            // Adiciona comportamento slide
-                            key: Key(cart.itemList[index].name),
-                            child: Card(
-                                child: ListTile(
-                                  title: Text(
-                                    '${cart.itemList[index].name}',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  subtitle: Text(
-                                    '${cart.itemList[index].description}',
-                                    style: TextStyle(fontSize: 15),
-                                  ),
-                                  trailing:
-                                      Text('R\$ ${cart.itemList[index].value}'),
-                                ),
-                                color: Colors.lightGreenAccent),
-
-                            background: slideRightBackground(), // Slide right
-                            secondaryBackground:
-                                slideLeftBackground(), // Slide left
-
-                            // ignore: missing_return
-                            confirmDismiss: (direction) async {
-                              if (direction == DismissDirection.endToStart) {
-                                final bool resp = await showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        content: Text(
-                                            "Você gostaria de remover: ${cart.itemList[index]} do carrinho?"),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                            child: Text(
-                                              "Cancelar",
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            ),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          FlatButton(
-                                            child: Text(
-                                              "Remover",
-                                              style:
-                                                  TextStyle(color: Colors.red),
-                                            ),
-                                            onPressed: () {
-                                              //Remove o lista no index selecionado
-                                              cart.removeItem(index);
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    });
-                                return resp;
-                              } else {
-                                // Navega para a pagina de edicao
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        CreateItem(item: cart.itemList[index]),
-                                  ),
-                                );
-                              }
-                            },
-                          );
-                        },
+                        itemBuilder: _getListItemTile, // Sem Context e index
                       )
                     : EmptyCart()),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (_) => CreateItem(
+                    builder: (_) => CreateEditItemPage(
                       item: null,
                     ),
                   ),
@@ -135,7 +77,103 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-// Quando arrastamos para a direita
+/// Widget utilizado para exibicao dos itens do carrinho [cart]
+Widget _getListItemTile(BuildContext context, int index) {
+  final cart = GetIt.I<Cart>();
+
+  return GestureDetector(
+      onTap: () {
+        cart.toggleSelectItem(index);
+      },
+      child: Dismissible(
+        // Adiciona comportamento slide
+        key: Key(cart.itemList[index].name), // Identificador do item
+        child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            margin: EdgeInsets.symmetric(vertical: 4),
+            color:
+                cart.itemList[index].selected ? Colors.red[100] : Colors.white,
+            child: Card(
+              color: cart.itemList[index].selected
+                  ? Colors.blue
+                  : cart.itemList[index].isDone ? Colors.lightGreen[400] : Colors.grey[300],
+              child: Container(
+                margin: EdgeInsets.all(0.0),
+                child: Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Column(children: <Widget>[
+                    ListTile(
+                      title: Text('${cart.itemList[index].name}',
+                          style: TextStyle(fontSize: 25, color: Colors.black, decoration: cart.itemList[index].isDone ? TextDecoration.lineThrough : null)),
+                      trailing: Text(
+                          'R\$ ${(cart.itemList[index].value * cart.itemList[index].qtt)}',
+                          style: TextStyle(fontSize: 25, color: Colors.black, decoration: cart.itemList[index].isDone ? TextDecoration.lineThrough : null)),
+                    ),
+                    Row(children: <Widget>[
+                      InkWell(
+                          onTap: () => cart.increaseItemQtt(index),
+                          child: Icon(Icons.add, color: Colors.green[800])),
+                      Text('${cart.itemList[index].qtt}',
+                          style: TextStyle(fontSize: 25, color: Colors.black, decoration: cart.itemList[index].isDone ? TextDecoration.lineThrough : null)),
+                      InkWell(
+                          onTap: () => cart.decreaseItemQtt(index),
+                          child: Icon(Icons.remove, color: Colors.red)),
+                    ]),
+                  ]),
+                ),
+              ),
+            )),
+
+        background: slideRightBackground(), // Slide right
+        secondaryBackground: slideLeftBackground(), // Slide left
+
+        // ignore: missing_return
+        confirmDismiss: (direction) async {
+          if (direction == DismissDirection.endToStart) {
+            final bool resp = await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    content: Text(
+                        "Você gostaria de remover: ${cart.itemList[index]} do carrinho?"),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text(
+                          "Cancelar",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      FlatButton(
+                        child: Text(
+                          "Remover",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        onPressed: () {
+                          //Remove o lista no index selecionado
+                          cart.removeItem(index);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                });
+            return resp;
+          } else {
+            // Navega para a pagina de edicao
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => CreateEditItemPage(item: cart.itemList[index]),
+              ),
+            );
+          }
+        },
+      ));
+}
+
+/// Widget retornado e exibido quando arrastamos um [Card] para a direita.
 Widget slideRightBackground() {
   return Container(
     color: Colors.green,
@@ -166,7 +204,7 @@ Widget slideRightBackground() {
   );
 }
 
-// Quando arrastamos para a esquerda
+/// Widget retornado e exibido quando arrastamos um [Card] para a esquerda.
 Widget slideLeftBackground() {
   return Container(
     color: Colors.red,
@@ -198,7 +236,7 @@ Widget slideLeftBackground() {
 }
 
 /// Esta classe retorna um widget mensagem com o valor total do carrinho.
-class CartTotalValue extends StatelessWidget {
+class CartInfos extends StatelessWidget {
   final cart = GetIt.I<Cart>();
 
   @override
@@ -209,7 +247,7 @@ class CartTotalValue extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
-              "Qtd. produtos: ${cart.itemList.length}",
+              "Qtd. produtos: ${cart.qttItems}",
               style: TextStyle(fontSize: 15, color: Colors.white),
               textAlign: TextAlign.center,
             ),
@@ -233,5 +271,39 @@ class EmptyCart extends StatelessWidget {
         style: TextStyle(fontSize: 25, color: Colors.black),
       ),
     );
+  }
+}
+
+/// Esta classe retorna um widget de troca de temas [Theme_Model]
+class ChangeTheme extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTap: () => GetIt.I<ThemeModel>().changeTheme(),
+        child: Icon(CupertinoIcons.brightness_solid));
+  }
+}
+
+/// Esta classe retorna um widget de remocao de multiplos itens do carrinho
+class RemoveSelectedItems extends StatelessWidget {
+  final cart = GetIt.I<Cart>();
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTap: () => cart.removeSelectedItems(),
+        child: Icon(Icons.delete_outline));
+  }
+}
+
+/// Esta classe retorna um widget de remocao de multiplos itens do carrinho
+class CheckSelectedItems extends StatelessWidget {
+  final cart = GetIt.I<Cart>();
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTap: () => cart.checkSelectedItems(),
+        child: Icon(Icons.check_circle_outline));
   }
 }
