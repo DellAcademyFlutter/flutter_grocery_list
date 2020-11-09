@@ -2,20 +2,23 @@ import 'package:flutter/cupertino.dart';
 
 /// Esta classe implementa o objeto [Model] de um item do mercado [Item].
 class Item extends ChangeNotifier{
-  /// Construtor padrao da classe
-  Item({this.id, this.name, this.description, this.value});
+  /// Construtor
+  Item({this.id, this.name, this.qtd, this.value});
 
-  // Atributos da classe
+  /// Atributos da classe
   int id;
   String name;
-  String description;
+  int qtd = 0;
+  //String description;
   double value;
 
-  List<Item> cartList = List();
+  increase(){
+    qtd = qtd + 1;
+    notifyListeners();
+  }
 
-  removeItemList(int index){
-    cartList.removeAt(index);
-
+  decrease(){
+    qtd= qtd - 1;
     notifyListeners();
   }
 

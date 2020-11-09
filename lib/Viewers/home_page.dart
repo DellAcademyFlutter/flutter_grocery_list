@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Viewers/add_item_page.dart';
 import 'package:flutter_grocery_list/Models/item.dart';
 import 'package:get_it/get_it.dart';
@@ -13,128 +14,155 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final item = GetIt.I<Item>();
+  final cart = GetIt.I<Cart>();
   var editText = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+
     // Adiciona, por padrao, um item leite.
-    item.cartList.add(Item(
-        id: item.cartList.length,
-        name: "Leite",
-        description: "Leite integral",
-        value: 3.50));
+    cart.cartList.add(
+        Item(id: cart.cartList.length, name: "Leite", qtd: 1, value: 3.50));
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: item,
-      builder: (context, w) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(widget.title),
-            actions: <Widget>[
-              Container(
-                  width: 40,
-                  height: 40,
-                  alignment: Alignment.centerLeft,
-                  child: Text("${item.cartList.length}", style: TextStyle(fontSize: 20),)),
-              TesteIsrael()
-            ],
-          ),
-          body: Center(
-            child: ListView.builder(
-              itemCount: item.cartList.length,
-              itemBuilder: (context, index) {
-                //Dismissible é um widjet que adiciona os comportamentos de slide
-                return Dismissible(
-                  key: Key(item.cartList[index].name),
-                  child: Card(
-                      child: ListTile(
-                        title: Text('${item.cartList[index].name}'),
-                        subtitle: Text('${item.cartList[index].description}'),
-                        trailing: Text('R\$ ${item.cartList[index].value}'),
-                      ),
-                      color: Colors.lightGreenAccent),
-
-                  //É o widget que fica visível quando deslizamos o item da lista para a direita.
-                  background: slideRightBackground(),
-
-                  // SecondaryBackground: É o outro lado do deslizamento.
-                  secondaryBackground: slideLeftBackground(),
-
-                  // ignore: missing_return
-                  confirmDismiss: (direction) async {
-                    if (direction == DismissDirection.endToStart) {
-                      final bool resp = await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: Text(
-                                  "Você gostaria de remover: ${item.cartList[index]} do carrinho?"),
-                              actions: <Widget>[
-                                FlatButton(
-                                  child: Text(
-                                    "Cancelar",
-                                    style: TextStyle(color: Colors.black),
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                                FlatButton(
-                                  child: Text(
-                                    "Remover",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                  onPressed: () {
-                                    //Remove o lista no index selecionado
-                                    item.removeItemList(index);
-
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          });
-                      return resp;
-                    } else {
-                      // Navega para a pagina de edicao
-                      setState(() {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                CreateItem(cart: item.cartList, item: item.cartList[index]),
-                          ),
-                        );
-                      });
-                    }
-                  },
-                );
-              },
-            ),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              setState(() {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => CreateItem(
-                      cart: item.cartList,
-                      item: null,
-                    ),
+        animation: cart,
+        builder: (context, w) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(widget.title),
+              actions: <Widget>[
+                Container(
+                  width: 200,
+                  height: 100,
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Valor total R\$: ${cart.totalValue}',
+                    style: TextStyle(fontSize: 25, color: Colors.green),
                   ),
-                ).whenComplete(() => setState(()=>null));
-              });
-            },
-            tooltip: 'Add',
-            child: Icon(Icons.add),
-          ),
-        );
-      }
-    );
+                ),
+                //TesteIsrael()
+              ],
+            ),
+            body: Center(
+              child: (cart.cartList.length != 0)
+                  ? ListView.builder(
+                      itemCount: cart.cartList.length,
+                      itemBuilder: (context, index) {
+                        //Dismissible é um widjet que adiciona os comportamentos de slide
+                        return Dismissible(
+                          key: Key(cart.cartList[index].name),
+                          child: Card(
+                            child: Container(
+                              child: Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Column(children: <Widget>[
+                                  ListTile(
+                                    title: Text('${cart.cartList[index].name}',
+                                        style: TextStyle(
+                                            fontSize: 25, color: Colors.black)),
+                                    trailing: Text(
+                                        'R\$ ${cart.cartList[index].value}',
+                                        style: TextStyle(
+                                            fontSize: 25, color: Colors.grey)),
+                                  ),
+                                  Row(children: <Widget>[
+                                    new IconButton(
+                                      icon:
+                                          Icon(Icons.add, color: Colors.green),
+                                      onPressed:
+                                          cart.cartList[index].increase(),
+                                    ),
+                                    Text('${cart.cartList[index].qtd}',
+                                        style: TextStyle(
+                                            fontSize: 25, color: Colors.grey)),
+                                    new IconButton(
+                                      icon:
+                                          Icon(Icons.remove, color: Colors.red),
+                                      onPressed:
+                                          cart.cartList[index].decrease(),
+                                    ),
+                                  ]),
+                                ]),
+                              ),
+                            ),
+                          ),
+
+                          //É o widget que fica visível quando deslizamos o item da lista para a direita.
+                          background: slideRightBackground(),
+
+                          // SecondaryBackground: É o outro lado do deslizamento.
+                          secondaryBackground: slideLeftBackground(),
+
+                          // ignore: missing_return
+                          confirmDismiss: (direction) async {
+                            if (direction == DismissDirection.endToStart) {
+                              final bool resp = await showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      content: Text(
+                                          "Você gostaria de remover: ${cart.cartList[index]} do carrinho?"),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          child: Text(
+                                            "Cancelar",
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        FlatButton(
+                                          child: Text(
+                                            "Remover",
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                          onPressed: () {
+                                            //Remove o lista no index selecionado
+                                            cart.removeItemList(index);
+
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                              return resp;
+                            } else {
+                              // Navega para a pagina de edicao
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => CreateItem(cart.cartList
+                                        .indexOf(cart.cartList[index])),
+                                  ),
+                                );
+                            }
+                          },
+                        );
+                      },
+                    )
+                  : Text('O seu carrinho está Vazio!'),
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+
+                  Navigator.of(context)
+                      .push(
+                        MaterialPageRoute(
+                          builder: (_) => CreateItem(null),
+                        ),
+                      );
+              },
+              tooltip: 'Add',
+              child: Icon(Icons.add),
+            ),
+          );
+        });
   }
 }
 
@@ -201,11 +229,15 @@ Widget slideLeftBackground() {
 }
 
 class TesteIsrael extends StatelessWidget {
-  final item = GetIt.I<Item>();
+  final cart = GetIt.I<Cart>();
 
   @override
   Widget build(BuildContext context) {
-    return Container(child: Text("${item.cartList.length}", style: TextStyle(fontSize: 25, color: Colors.black),),);
+    return Container(
+      child: Text(
+        '',
+        style: TextStyle(fontSize: 25, color: Colors.black),
+      ),
+    );
   }
 }
-

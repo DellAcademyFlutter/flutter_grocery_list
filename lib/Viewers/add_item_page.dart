@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_grocery_list/Models/cart.dart';
+import 'package:get_it/get_it.dart';
 import '../Models/item.dart';
 
 /// Esta classe implementa uma tela de adicao/edicao de [Item].
 class CreateItem extends StatefulWidget {
-  CreateItem({this.cart, this.item});
+  CreateItem(this.indexEditedItem);
 
-  final List<Item> cart;
-  final Item item;
+  ///Carrinho
+  final cart = GetIt.I<Cart>();
+
+  ///Posicao para a edicao
+  int indexEditedItem;
 
   @override
   _CreateItemState createState() => _CreateItemState();
@@ -22,9 +27,10 @@ class _CreateItemState extends State<CreateItem> {
   @override
   // Inicializa o texto de edicao com base no estado 'edicao' ou 'adicao'.
   void initState() {
-    isEdit = widget.item != null;
+    isEdit = widget.indexEditedItem != null;
     textEditingController =
-        TextEditingController(text: widget?.item?.name ?? '');
+        TextEditingController(text: (widget.indexEditedItem != null)?
+        widget.cart.cartList[widget.indexEditedItem].name ?? '' : '');
     // Altera a label do botao de adicao/edicao
     setState(() {
       if (isEdit) {
@@ -40,7 +46,7 @@ class _CreateItemState extends State<CreateItem> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Selecione o item'),
+        title: Text('Item'),
         centerTitle: true,
       ),
       body: Padding(
@@ -64,24 +70,16 @@ class _CreateItemState extends State<CreateItem> {
                     ? () {
                         if (isEdit) {
                           // Realiza a edicao do item
+
                           final editedItem = Item(
-                              id: widget.item.id,
+                              id: widget.cart.cartList[widget.indexEditedItem].id,
                               name: itemName,
-                              description: 'padrão',
                               value: 3.50);
 
-                          final index = widget.cart.indexOf(editedItem);
-                          widget.cart.removeAt(index);
-                          widget.cart.insert(index, editedItem);
+                          widget.cart.updateItem(editedItem);
                         } else {
                           // Realiza a adicao do item
-                          Item newItem = Item(
-                            id: widget.cart.length + 1,
-                            name: itemName,
-                            description: 'padrão',
-                            value: 3.50,
-                          );
-                          widget.cart.add(newItem);
+                          widget.cart.addItem(itemName);
                         }
                         Navigator.of(context).pop();
                       }

@@ -5,7 +5,4 @@ class Controller {
 
   final item = GetIt.I<Item>();
 
-  update(){}
-
-
-}
+ }
