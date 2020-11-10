@@ -1,24 +1,27 @@
 import 'package:flutter/cupertino.dart';
 
 /// Esta classe implementa o objeto [Model] de um item do mercado [Item].
-class Item extends ChangeNotifier{
+class Item {
+  //****************************************************************************
+  // Construtor da classe
+  //****************************************************************************
   /// Construtor padrao da classe
   Item({this.id, this.name, this.description, this.value});
 
+  //****************************************************************************
   // Atributos da classe
+  //****************************************************************************
   int id;
+  int qtt = 1;
   String name;
   String description;
   double value;
+  bool selected = false;
+  bool isDone = false;
 
-  List<Item> cartList = List();
-
-  removeItemList(int index){
-    cartList.removeAt(index);
-
-    notifyListeners();
-  }
-
+  //****************************************************************************
+  // Metodos da classe
+  //****************************************************************************
   /// Disjuncao logica (Equals): compara se dois objetos [Item] sao iguais.
   @override
   bool operator == (Object other) =>

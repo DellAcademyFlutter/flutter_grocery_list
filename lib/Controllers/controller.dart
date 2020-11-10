@@ -3,9 +3,4 @@ import 'package:get_it/get_it.dart';
 
 class Controller {
 
-  final item = GetIt.I<Item>();
-
-  update(){}
-
-
 }
