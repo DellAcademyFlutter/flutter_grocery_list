@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Viewers/add_item_page.dart';
 import 'package:flutter_grocery_list/Models/item.dart';
+import 'package:flutter_grocery_list/local/shared_prefs.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:get_it/get_it.dart';
 
@@ -36,6 +37,19 @@ class _MyHomePageState extends State<MyHomePage> {
                 children: <Widget>[
                   Text(widget.title),
                   ChangeTheme(),
+                  FutureBuilder(
+                    future: SharedPrefs.read("isDarkTheme"),
+                    initialData: "---",
+                    builder: (context, snapshot){
+
+                      if(snapshot.hasData){
+                        return Text("${snapshot.data}");
+                      }else{
+                        return CircularProgressIndicator();
+                      }
+
+                    },
+                  )
                 ],
               ),
               backgroundColor:
