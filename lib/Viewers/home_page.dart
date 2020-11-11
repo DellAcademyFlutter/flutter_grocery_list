@@ -255,7 +255,7 @@ class CartInfos extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text(
-              "Total: R\$ ${cart.totalValueCart}",
+              "Total: R\$ ${MathUtils.round(cart.totalValueCart,2)}",
               style: TextStyle(fontSize: 20, color: Colors.black),
               textAlign: TextAlign.center,
             ),

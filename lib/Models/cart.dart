@@ -67,7 +67,7 @@ class Cart extends ChangeNotifier {
     // Remove o item
     amountItems -= cartList[index].amount;
     cartList.removeAt(index);
-   
+
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }
 
