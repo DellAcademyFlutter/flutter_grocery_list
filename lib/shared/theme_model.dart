@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_grocery_list/shared_preferences/shared_prefs.dart';
 
 class ThemeModel extends ChangeNotifier{
 
@@ -10,6 +11,7 @@ class ThemeModel extends ChangeNotifier{
   set isDarkTheme(bool value) {
     _isDarkTheme = value;
 
+    SharedPrefs.save("isDarkTheme", value.toString());
     notifyListeners();
   }
 

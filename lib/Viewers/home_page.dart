@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Viewers/add_item_page.dart';
 import 'package:flutter_grocery_list/Models/item.dart';
+import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:get_it/get_it.dart';
 
@@ -96,7 +97,9 @@ Widget _getListItemTile(BuildContext context, int index) {
             child: Card(
               color: cart.itemList[index].selected
                   ? Colors.blue
-                  : cart.itemList[index].isDone ? Colors.lightGreen[400] : Colors.grey[300],
+                  : cart.itemList[index].isDone
+                      ? Colors.lightGreen[400]
+                      : Colors.grey[300],
               child: Container(
                 margin: EdgeInsets.all(0.0),
                 child: Padding(
@@ -104,17 +107,36 @@ Widget _getListItemTile(BuildContext context, int index) {
                   child: Column(children: <Widget>[
                     ListTile(
                       title: Text('${cart.itemList[index].name}',
-                          style: TextStyle(fontSize: 25, color: Colors.black, decoration: cart.itemList[index].isDone ? TextDecoration.lineThrough : null)),
+                          style: TextStyle(
+                              fontSize: 25,
+                              color: Colors.black,
+                              decoration: cart.itemList[index].isDone
+                                  ? TextDecoration.lineThrough
+                                  : null)),
+                      subtitle: Text(
+                        '${cart.itemList[index].description}',
+                        style: TextStyle(fontSize: 15),
+                      ),
                       trailing: Text(
-                          'R\$ ${(cart.itemList[index].value * cart.itemList[index].qtt)}',
-                          style: TextStyle(fontSize: 25, color: Colors.black, decoration: cart.itemList[index].isDone ? TextDecoration.lineThrough : null)),
+                          'R\$ ${MathUtils.round(cart.itemList[index].value*cart.itemList[index].qtt, 2).toString()}',
+                          style: TextStyle(
+                              fontSize: 25,
+                              color: Colors.black,
+                              decoration: cart.itemList[index].isDone
+                                  ? TextDecoration.lineThrough
+                                  : null)),
                     ),
                     Row(children: <Widget>[
                       InkWell(
                           onTap: () => cart.increaseItemQtt(index),
                           child: Icon(Icons.add, color: Colors.green[800])),
                       Text('${cart.itemList[index].qtt}',
-                          style: TextStyle(fontSize: 25, color: Colors.black, decoration: cart.itemList[index].isDone ? TextDecoration.lineThrough : null)),
+                          style: TextStyle(
+                              fontSize: 25,
+                              color: Colors.black,
+                              decoration: cart.itemList[index].isDone
+                                  ? TextDecoration.lineThrough
+                                  : null)),
                       InkWell(
                           onTap: () => cart.decreaseItemQtt(index),
                           child: Icon(Icons.remove, color: Colors.red)),
@@ -252,7 +274,7 @@ class CartInfos extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             Text(
-              "Valor total: R\$ ${cart.totalValue}",
+              "Valor total: R\$ ${MathUtils.round(cart.totalValue, 2)}",
               style: TextStyle(fontSize: 15, color: Colors.white),
               textAlign: TextAlign.center,
             ),
@@ -291,7 +313,7 @@ class RemoveSelectedItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () => cart.removeSelectedItems(),
+        onTap: () => showAlertDialog(context),
         child: Icon(Icons.delete_outline));
   }
 }
@@ -306,4 +328,38 @@ class CheckSelectedItems extends StatelessWidget {
         onTap: () => cart.checkSelectedItems(),
         child: Icon(Icons.check_circle_outline));
   }
+}
+
+/// Mensagem de feedback de delecao
+showAlertDialog(BuildContext context) {
+  final cart = GetIt.I<Cart>();
+
+  Widget cancelaButton = FlatButton(
+    child: Text("Nao"),
+    onPressed: () => Navigator.of(context).pop(),
+  );
+  Widget continuaButton = FlatButton(
+      child: Text("Sim"),
+      onPressed: () {
+        cart.removeSelectedItems();
+        Navigator.of(context).pop();
+      });
+
+  //configura o AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text("Removendo item(s)"),
+    content: Text("Deseja remover os itens selecionados?"),
+    actions: [
+      cancelaButton,
+      continuaButton,
+    ],
+  );
+
+  //exibe o diálogo
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }

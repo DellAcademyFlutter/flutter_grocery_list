@@ -6,7 +6,7 @@ class Item {
   // Construtor da classe
   //****************************************************************************
   /// Construtor padrao da classe
-  Item({this.id, this.name, this.description, this.value});
+  Item({this.id, this.name, this.description, this.value, this.qtt});
 
   //****************************************************************************
   // Atributos da classe

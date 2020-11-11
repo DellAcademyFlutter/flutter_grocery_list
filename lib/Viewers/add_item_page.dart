@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:get_it/get_it.dart';
 import '../Models/item.dart';
@@ -16,23 +17,40 @@ class CreateEditItemPage extends StatefulWidget {
 
 /// [State] da pagina de adicao/edicao de [Item].
 class _CreateEditItemPageState extends State<CreateEditItemPage> {
-  TextEditingController textEditingController;
+  TextEditingController tecItemName;
+  TextEditingController tecItemDescription;
+  TextEditingController tecItemValue;
   String textHint = 'Adicionar Item';
+  String pageTitle = 'Selecione o item';
   String itemName = '';
+  String itemDescription = '';
+  double itemValue = 0.0;
+
   bool isEdit;
 
   @override
   // Inicializa o texto de edicao com base no estado 'edicao' ou 'adicao'.
   void initState() {
     isEdit = widget.item != null;
-    textEditingController =
-        TextEditingController(text: widget?.item?.name ?? '');
+    tecItemName = TextEditingController(text: widget?.item?.name ?? '');
+    tecItemDescription =
+        TextEditingController(text: widget?.item?.description ?? '');
+    tecItemValue = TextEditingController(
+        text: widget?.item?.value.toString() == 'null'
+            ? ''
+            : widget?.item?.value.toString());
+
     // Altera a label do botao de adicao/edicao
     setState(() {
       if (isEdit) {
+        itemName = widget.item.name;
+        itemDescription = widget.item.description;
+        itemValue = widget.item.value;
         textHint = 'Salvar modificações';
+        pageTitle = 'Atualize o item';
       } else {
         textHint = 'Adicionar Item';
+        pageTitle = 'Selecione o item';
       }
     });
     super.initState();
@@ -42,7 +60,7 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Selecione o item'),
+        title: Text(pageTitle),
         centerTitle: true,
       ),
       body: Padding(
@@ -52,37 +70,64 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              TextField(
-                controller: textEditingController,
-                onChanged: (valor) => setState(() => itemName = valor),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Digite o nome do item',
-                ),
-              ),
+              Container(
+                  child: Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Column(children: [
+                        TextField(
+                          controller: tecItemName,
+                          onChanged: (valor) =>
+                              setState(() => itemName = valor),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Digite o nome do item',
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        TextField(
+                          controller: tecItemDescription,
+                          onChanged: (valor) =>
+                              setState(() => itemDescription = valor),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Digite a descrição do item',
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        TextField(
+                          controller: tecItemValue,
+                          keyboardType: TextInputType.numberWithOptions(
+                              signed: false, decimal: true),
+                          inputFormatters: [
+                            // ignore: deprecated_member_use
+                            WhitelistingTextInputFormatter(
+                                RegExp(r'^\d+\.?\d{0,2}')),
+                          ],
+                          onChanged: (valor) =>
+                              setState(() => itemValue = double.parse(valor)),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Digite o valor do item',
+                          ),
+                        )
+                      ]))),
               SizedBox(height: 12),
               RaisedButton(
-                onPressed: itemName != ''
+                onPressed:(itemName != '' || itemDescription != '')
                     ? () {
                         if (isEdit) {
                           // Realiza a edicao do item
-                          final editedItem = Item(
-                              id: widget.item.id,
-                              name: itemName,
-                              description: 'padrão',
-                              value: 3.50
-                          );
-
-                          widget.cart.updateItem(editedItem);
+                          if ((itemName != widget.item.name || itemDescription != widget.item.description || itemValue != widget.item.value))
+                          widget.cart.updateItem(widget.item.id, itemName,
+                              itemDescription, itemValue, widget.item.qtt);
                         } else {
-                          // Realiza a adicao do item
-                          Item newItem = Item(
-                            id: widget.cart.itemList.length + 1,
-                            name: itemName,
-                            description: 'descrição padrão',
-                            value: 3.50,
-                          );
-                          widget.cart.addItem(newItem);
+                          if (itemName != '' || itemDescription != ''){
+                            // Realiza a adicao do item
+                            widget.cart.addItem(widget.cart.itemList.length + 1,
+                                itemName, itemDescription, itemValue, 1);
+                          } else{
+                            return null;
+                          }
                         }
                         Navigator.of(context).pop();
                       }

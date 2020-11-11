@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'item.dart';
 
 /// Esta classe implementa o objeto [Model] de um carrinho [Cart].
@@ -20,8 +21,15 @@ class Cart extends ChangeNotifier {
   //****************************************************************************
   // Metodos da classe
   //****************************************************************************
-  /// Este metodo atualiza um item de [itemList].
-  addItem(Item item) {
+  /// Este metodo adiciona um item de [itemList].
+  addItem(int id, String name, String description, double value, int qtt) {
+    Item item = Item(
+      id: itemList.length + 1,
+      name: name,
+      description: description,
+      value: value,
+      qtt: 1
+    );
     itemList.add(item);
     totalValue += item.value;
     qttItems++;
@@ -30,12 +38,26 @@ class Cart extends ChangeNotifier {
   }
 
   /// Este metodo atualiza um item de [itemList].
-  updateItem(Item item) {
-    final index = itemList.indexOf(item);
-    itemList.removeAt(index);
-    itemList.insert(index, item);
+  updateItem(int id, String name, String description, double value, int qtt) {
+    final item = Item(
+        id: id,
+        name: name,
+        description: description,
+        value: value,
+      qtt: qtt
+    );
 
-    //TODO: atualizar o valor total do carrinho quando puder editar o preco dos itens.
+    final index = itemList.indexOf(item);
+    // Atualiza o preco total do carrinho
+    totalValue -= itemList[index].value*itemList[index].qtt;
+    qttItems -= itemList[index].qtt;
+    // Remove o item
+    itemList.removeAt(index);
+
+    // Adiciona o novo item atualizado
+    itemList.insert(index, item);
+    // Modifica o novo preco
+    totalValue += itemList[index].value*itemList[index].qtt;
 
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }
@@ -43,10 +65,10 @@ class Cart extends ChangeNotifier {
   /// Este metodo remove um item de [itemList] baseado em um indice [index].
   removeItem(int index) {
     // Atualiza o preco total do carrinho
-    totalValue -= (itemList[index].value*itemList[index].qtt);
+    totalValue -= itemList[index].value*itemList[index].qtt;
     // Remove o item
     itemList.removeAt(index);
-    qttItems--;
+    qttItems -= itemList[index].qtt;
 
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }
@@ -71,7 +93,7 @@ class Cart extends ChangeNotifier {
     for (int i = itemList.length-1; i > -1; i--) {
       if (itemList[i].selected) {
         // Atualiza o preco total do carrinho
-        totalValue -= (itemList[i].value*itemList[i].qtt);
+        totalValue -= itemList[i].value*itemList[i].qtt;
         qttItems -= itemList[i].qtt;
         // Remove o item
         itemList.removeAt(i);
