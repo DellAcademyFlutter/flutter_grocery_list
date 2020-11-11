@@ -66,9 +66,10 @@ class Cart extends ChangeNotifier {
   removeItem(int index) {
     // Atualiza o preco total do carrinho
     totalValue -= itemList[index].value*itemList[index].qtt;
+    qttItems -= itemList[index].qtt;
     // Remove o item
     itemList.removeAt(index);
-    qttItems -= itemList[index].qtt;
+
 
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }

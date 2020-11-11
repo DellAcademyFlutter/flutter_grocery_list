@@ -113,19 +113,21 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
                       ]))),
               SizedBox(height: 12),
               RaisedButton(
-                onPressed:(itemName != '' || itemDescription != '')
+                onPressed: (itemName != '' || itemDescription != '')
                     ? () {
                         if (isEdit) {
                           // Realiza a edicao do item
-                          if ((itemName != widget.item.name || itemDescription != widget.item.description || itemValue != widget.item.value))
-                          widget.cart.updateItem(widget.item.id, itemName,
-                              itemDescription, itemValue, widget.item.qtt);
+                          if ((itemName != widget.item.name ||
+                              itemDescription != widget.item.description ||
+                              itemValue != widget.item.value))
+                            widget.cart.updateItem(widget.item.id, itemName,
+                                itemDescription, itemValue, widget.item.qtt);
                         } else {
-                          if (itemName != '' || itemDescription != ''){
+                          if (itemName != '' || itemDescription != '') {
                             // Realiza a adicao do item
                             widget.cart.addItem(widget.cart.itemList.length + 1,
                                 itemName, itemDescription, itemValue, 1);
-                          } else{
+                          } else {
                             return null;
                           }
                         }
