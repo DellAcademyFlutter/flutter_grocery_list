@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Viewers/add_item_page.dart';
-import 'package:flutter_grocery_list/Models/item.dart';
+import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:get_it/get_it.dart';
 
@@ -91,22 +91,30 @@ Widget _getListItemTile(BuildContext context, int index) {
             padding: EdgeInsets.symmetric(horizontal: 8),
             margin: EdgeInsets.symmetric(vertical: 4),
             color: cart.cartList[index].selected
-                ? Colors.amberAccent
+                ? Colors.greenAccent
                 : Colors.white,
             child: Card(
-              color: cart.cartList[index].isDone
-                  ? Colors.amber
-                  : Colors.white,
+              color: cart.cartList[index].isDone ? Colors.amber : Colors.white,
               child: Container(
                 child: Padding(
                   padding: EdgeInsets.all(12.0),
                   child: Column(children: <Widget>[
                     ListTile(
                       title: Text('${cart.cartList[index].name}',
-                          style: TextStyle(fontSize: 25, color: Colors.black, decoration: cart.cartList[index].isDone ? TextDecoration.lineThrough : null)),
+                          style: TextStyle(
+                              fontSize: 25,
+                              color: Colors.black,
+                              decoration: cart.cartList[index].isDone
+                                  ? TextDecoration.lineThrough
+                                  : null)),
                       trailing: Text(
-                          'R\$ ${(cart.cartList[index].unitedValue * cart.cartList[index].amount)}',
-                          style: TextStyle(fontSize: 25, color: Colors.black, decoration: cart.cartList[index].isDone ? TextDecoration.lineThrough : null)),
+                          'R\$ ${MathUtils.round(cart.cartList[index].value*cart.cartList[index].amount, 2).toString()}',
+                          style: TextStyle(
+                              fontSize: 25,
+                              color: Colors.black,
+                              decoration: cart.cartList[index].isDone
+                                  ? TextDecoration.lineThrough
+                                  : null)),
                     ),
                     Row(children: <Widget>[
                       SizedBox(width: 10),
@@ -292,7 +300,7 @@ class RemoveSelectedItems extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () => cart.removeSelectedItems(),
+        onTap: () => showAlertDialog(context),
         child: Icon(Icons.delete_outline));
   }
 }
@@ -306,4 +314,37 @@ class CheckSelectedItems extends StatelessWidget {
     return InkWell(
         onTap: () => cart.checkSelectedItems(), child: Icon(Icons.beenhere));
   }
+}
+
+showAlertDialog(BuildContext context) {
+  final cart = GetIt.I<Cart>();
+
+  Widget cancelaButton = FlatButton(
+    child: Text("Nao"),
+    onPressed: () => Navigator.of(context).pop(),
+  );
+  Widget continuaButton = FlatButton(
+      child: Text("Sim"),
+      onPressed: () {
+        cart.removeSelectedItems();
+        Navigator.of(context).pop();
+      });
+
+  //configura o AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text("Confirmação"),
+    content: Text("Deseja remover os itens selecionados?"),
+    actions: [
+      cancelaButton,
+      continuaButton,
+    ],
+  );
+
+  //exibe o diálogo
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }

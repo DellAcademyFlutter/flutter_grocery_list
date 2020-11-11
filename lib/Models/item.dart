@@ -6,7 +6,7 @@ class Item {
   // Construtor da classe
   //****************************************************************************
   /// Construtor padrao da classe
-  Item({this.id, this.name, this.unitedValue});
+  Item({this.id, this.name, this.value, this.amount});
 
   //****************************************************************************
   // Atributos da classe
@@ -14,8 +14,7 @@ class Item {
   int id;
   int amount = 1;
   String name;
-  double unitedValue;
-  double totalValue;
+  double value;
   bool selected = false;
   bool isDone = false;
 

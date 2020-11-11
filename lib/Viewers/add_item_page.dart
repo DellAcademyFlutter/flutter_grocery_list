@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:get_it/get_it.dart';
 import '../Models/item.dart';
@@ -16,23 +17,36 @@ class CreateEditItemPage extends StatefulWidget {
 
 /// [State] da pagina de adicao/edicao de [Item].
 class _CreateEditItemPageState extends State<CreateEditItemPage> {
-  TextEditingController textEditingController;
+  TextEditingController tecItemName;
+  TextEditingController tecItemValue;
   String textHint = 'Adicionar Item';
+  String pageTitle = 'Selecione o item';
   String itemName = '';
+  String itemDescription = '';
+  double itemValue = 0.0;
+
   bool isEdit;
 
   @override
   // Inicializa o texto de edicao com base no estado 'edicao' ou 'adicao'.
   void initState() {
     isEdit = widget.item != null;
-    textEditingController =
-        TextEditingController(text: widget?.item?.name ?? '');
+    tecItemName = TextEditingController(text: widget?.item?.name ?? '');
+    tecItemValue = TextEditingController(
+        text: widget?.item?.value.toString() == 'null'
+            ? ''
+            : widget?.item?.value.toString());
+
     // Altera a label do botao de adicao/edicao
     setState(() {
       if (isEdit) {
-        textHint = 'Salvar modificações';
+        itemName = widget.item.name;
+        itemValue = widget.item.value;
+        textHint = 'Salvar alterações';
+        pageTitle = 'Editando o item';
       } else {
         textHint = 'Adicionar Item';
+        pageTitle = 'Item:';
       }
     });
     super.initState();
@@ -42,8 +56,7 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Item'),
-        backgroundColor: Colors.amber,
+        title: Text(pageTitle),
         centerTitle: true,
       ),
       body: Padding(
@@ -53,38 +66,57 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              TextField(
-                controller: textEditingController,
-                onChanged: (valor) => setState(() => itemName = valor),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Digite o nome do item',
-                ),
-              ),
+              Container(
+                  child: Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Column(children: [
+                        TextField(
+                          controller: tecItemName,
+                          onChanged: (valor) =>
+                              setState(() => itemName = valor),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Digite o nome do item',
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        TextField(
+                          controller: tecItemValue,
+                          keyboardType: TextInputType.numberWithOptions(
+                              signed: false, decimal: true),
+                          inputFormatters: [
+                            // ignore: deprecated_member_use
+                            WhitelistingTextInputFormatter(
+                                RegExp(r'^\d+\.?\d{0,2}')),
+                          ],
+                          onChanged: (valor) =>
+                              setState(() => itemValue = double.parse(valor)),
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            hintText: 'Digite o valor do item',
+                          ),
+                        )
+                      ]))),
               SizedBox(height: 12),
               RaisedButton(
-                onPressed: itemName != ''
+                onPressed:(itemName != '')
                     ? () {
-                        if (isEdit) {
-                          // Realiza a edicao do item
-                          final editedItem = Item(
-                              id: widget.item.id,
-                              name: itemName,
-                              unitedValue: 3.0
-                          );
-
-                          widget.cart.updateItem(editedItem);
-                        } else {
-                          // Realiza a adicao do item
-                          Item newItem = Item(
-                            id: widget.cart.cartList.length + 1,
-                            name: itemName,
-                            unitedValue: 3.0,
-                          );
-                          widget.cart.addItem(newItem);
-                        }
-                        Navigator.of(context).pop();
-                      }
+                  if (isEdit) {
+                    // Realiza a edicao do item
+                    if ((itemName != widget.item.name || itemValue != widget.item.value))
+                      widget.cart.updateItem(widget.item.id, itemName,
+                           itemValue, widget.item.amount);
+                  } else {
+                    if (itemName != ''){
+                      // Realiza a adicao do item
+                      widget.cart.addItem(widget.cart.cartList.length + 1,
+                          itemName, itemValue, 1);
+                    } else{
+                      return null;
+                    }
+                  }
+                  Navigator.of(context).pop();
+                }
                     : null,
                 child: Text(
                   textHint,
