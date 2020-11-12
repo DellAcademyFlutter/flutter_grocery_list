@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
+import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:flutter_grocery_list/Viewers/add_item_page.dart';
+import 'package:flutter_grocery_list/Viewers/login_page.dart';
+import 'package:flutter_grocery_list/local/shared_prefs.dart';
 import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:get_it/get_it.dart';
+
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -17,6 +21,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final cart = GetIt.I<Cart>();
+  final loggedUser = GetIt.I<User>();
 
   @override
   void initState() {
@@ -32,8 +37,12 @@ class _MyHomePageState extends State<MyHomePage> {
             appBar: AppBar(
               title: Row(
                 children: <Widget>[
-                  Text(widget.title, style: TextStyle(color: Colors.black)),
-                  changeTheme(),
+                  Column(
+                    children: [
+                      Text(widget.title),
+                      Text(loggedUser?.name == null ? "Sem perfil" : loggedUser.name),
+                    ],
+                  ),
                 ],
               ),
               backgroundColor:
@@ -47,7 +56,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           RemoveSelectedItems(),
                         ],
                       )
-                    : CartInfos()
+                    : CartInfos(),
+                SizedBox(
+                  width: 20,
+                ),
+                Logout(),
               ],
             ),
             body: Center(
@@ -320,7 +333,7 @@ showAlertDialog(BuildContext context) {
   final cart = GetIt.I<Cart>();
 
   Widget cancelaButton = FlatButton(
-    child: Text("Nao"),
+    child: Text("Não"),
     onPressed: () => Navigator.of(context).pop(),
   );
   Widget continuaButton = FlatButton(
@@ -348,3 +361,52 @@ showAlertDialog(BuildContext context) {
     },
   );
 }
+
+/// Este widget exibe uma label para o [ThemeModel]
+// ignore: non_constant_identifier_names
+Widget ThemeLabel() {
+  return FutureBuilder(
+    future: SharedPrefs.read("isDarkTheme"),
+    initialData: "---",
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        return null; //Text("${snapshot.data}");
+      } else {
+        return null; //CircularProgressIndicator();
+      }
+    },
+  );
+}
+
+
+/// Esta classe retorna um widget de logout de [User]
+class Logout extends StatelessWidget {
+  final loggedUser = GetIt.I<User>();
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+        onTap: () {
+          SharedPrefs.contains("loggedUser").then((value) {
+            if (value) {
+              loggedUser.name = null;
+              SharedPrefs.remove("loggedUser");
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        LoginPage()),
+              );
+            } else {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => LoginPage(),
+                ),
+              );
+              }
+              });
+        },
+        child: Icon(Icons.power_settings_new, semanticLabel: "logout",));
+  }
+}
+

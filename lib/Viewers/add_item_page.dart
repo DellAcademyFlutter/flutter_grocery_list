@@ -58,6 +58,7 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
       appBar: AppBar(
         title: Text(pageTitle),
         centerTitle: true,
+        backgroundColor: Colors.amber,
       ),
       body: Padding(
         padding: const EdgeInsets.all(18),

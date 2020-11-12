@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:flutter_grocery_list/Viewers/home_page.dart';
+import 'package:flutter_grocery_list/Viewers/login_page.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:get_it/get_it.dart';
 import 'Models/cart.dart';
@@ -12,35 +14,46 @@ import 'local/shared_prefs.dart';
 void main() {
   GetIt.I.registerSingleton<Cart>(Cart()); // Um Singleton de [Cart].
   GetIt.I.registerSingleton<ThemeModel>(ThemeModel()); // Um Singleton de [ThemeModel].
+  GetIt.I.registerSingleton<User>(User()); // Um singleton de User
 
   // Execucao do aplicativo
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  final themeModel = GetIt.I<ThemeModel>();
+  final loggedUser = GetIt.I<User>();
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-        animation: GetIt.I<ThemeModel>(),
+        animation: themeModel,
         builder: (context, w) {
           return MaterialApp(
             title: 'Flutter Demo',
-            theme: GetIt
-                .I<ThemeModel>()
+            theme: themeModel
                 .isDarkTheme ? Themes.highContrastTheme()
                 : Themes.defaultTheme(),
             debugShowCheckedModeBanner: false,
-            home: MyHomePage(title: 'Carrinho'),
+            home:  loggedUser.name != null ? MyHomePage(title: 'Carrinho') : LoginPage(),
             builder: (context, child) {
-              final themeModel = GetIt.I<ThemeModel>();
 
               SharedPrefs.read("isDarkTheme").then((value) {
                 themeModel.isDarkTheme = (value == "true");
               });
 
-              return child;
-            },
-          );
-        });
+                SharedPrefs.contains("loggedUser").then((value) {
+                  if (value) {
+                    SharedPrefs.read("loggedUser").then((value) {
+                      loggedUser.name = value;
+                    });
+                  } else{
+                    loggedUser.name = null;
+                  }
+                });
+                return child;
+              },
+              );
+            });
+    }
   }
-}
