@@ -35,59 +35,80 @@ class _MyHomePageState extends State<MyHomePage> {
     return AnimatedBuilder(
         animation: cart,
         builder: (context, w) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Row(
-                children: <Widget>[
-                  Column(
+          return DefaultTabController(
+            length: 3,
+            child: Scaffold(
+              appBar: AppBar(
+                bottom: TabBar(
+                  isScrollable: false,
+                  tabs: [
+                    Tab(icon: Icon(Icons.done_outline)),
+                    Tab(icon: Icon(Icons.done_all)),
+                    Tab(icon: Icon(Icons.person_outline)),
+                  ],
+                ),
+                title: Row(
+                  children: <Widget>[
+                    Column(
+                      children: [
+                        Text(widget.title),
+                        Text(loggedUser?.name == null ? "nulo" : loggedUser.name),
+                      ],
+                    ),
+                    ChangeTheme(),
+                  ],
+                ),
+                backgroundColor:
+                cart.hasSelectedItems() ? Colors.blue[900] : Colors.blue,
+                actions: <Widget>[
+                  cart.hasSelectedItems()
+                      ? Row(
                     children: [
-                      Text(widget.title),
-                      Text(loggedUser?.name == null ? "nulo" : loggedUser.name),
+                      CheckSelectedItems(),
+                      SizedBox(width: 20),
+                      RemoveSelectedItems(),
                     ],
+                  )
+                      : CartInfos(),
+                  SizedBox(
+                    width: 20,
                   ),
-                  ChangeTheme(),
+                  Logout(),
                 ],
               ),
-              backgroundColor:
-                  cart.hasSelectedItems() ? Colors.blue[900] : Colors.blue,
-              actions: <Widget>[
-                cart.hasSelectedItems()
-                    ? Row(
-                        children: [
-                          CheckSelectedItems(),
-                          SizedBox(width: 20),
-                          RemoveSelectedItems(),
-                        ],
-                      )
-                    : CartInfos(),
-                SizedBox(
-                  width: 20,
-                ),
-                Logout(),
-              ],
-            ),
-            body: Center(
-                child: cart.itemList.length != 0
-                    ? ListView.builder(
-                        itemCount: cart.itemList.length,
-                        itemBuilder: _getListItemTile, // Sem Context e index
-                      )
-                    : EmptyCart()),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => CreateEditItemPage(
-                      item: null,
+              body: TabBarView(
+                children: <Widget>[
+                  cartListPendence(),
+                  Text("Produto já inserido"),
+                  Text("Perfil"),
+                ],
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => CreateEditItemPage(
+                        item: null,
+                      ),
                     ),
-                  ),
-                );
-              },
-              tooltip: 'Add',
-              child: Icon(Icons.add),
+                  );
+                },
+                tooltip: 'Add',
+                child: Icon(Icons.add),
+              ),
             ),
           );
         });
+  }
+
+  Widget cartListPendence() {
+    return Center(
+        child: cart.itemList.length != 0
+            ? ListView.builder(
+          itemCount: cart.itemList.length,
+          itemBuilder: _getListItemTile, // Sem Context e index
+        )
+            : EmptyCart());
   }
 }
 
@@ -106,13 +127,13 @@ Widget _getListItemTile(BuildContext context, int index) {
             padding: EdgeInsets.symmetric(horizontal: 8),
             margin: EdgeInsets.symmetric(vertical: 4),
             color:
-                cart.itemList[index].selected ? Colors.red[100] : Colors.white,
+            cart.itemList[index].selected ? Colors.red[100] : Colors.white,
             child: Card(
               color: cart.itemList[index].selected
                   ? Colors.blue
                   : cart.itemList[index].isDone
-                      ? Colors.lightGreen[400]
-                      : Colors.grey[300],
+                  ? Colors.lightGreen[400]
+                  : Colors.grey[300],
               child: Container(
                 margin: EdgeInsets.all(0.0),
                 child: Padding(
