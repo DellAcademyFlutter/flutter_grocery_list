@@ -11,4 +11,14 @@ class SharedPrefs{
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(key) ?? '0';
   }
+
+  static Future<bool> contains(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.containsKey(key);
+  }
+
+  static Future remove(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove(key);
+  }
 }
