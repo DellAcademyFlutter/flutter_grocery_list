@@ -141,6 +141,21 @@ class Cart extends ChangeNotifier {
     return (cartList.any((item) => item.selected));
   }
 
+  /// Este metodo retorna true se existir pelo menos 1 item em [itemList]
+  hasItems(){
+    return (cartList.length > 0);
+  }
+
+  /// Este metodo retorna true se existir pelo menos 1 item comprado em [itemList]
+  hasUnDoneItems(){
+    return (cartList.any((item) => !item.isDone));
+  }
+
+  /// Este metodo retorna true se existir pelo menos 1 item comprado em [itemList]
+  hasDoneItems(){
+    return (cartList.any((item) => item.isDone));
+  }
+
   /// Disjuncao logica (Equals): compara se dois objetos [Item] sao iguais.
   @override
   bool operator ==(Object other) =>

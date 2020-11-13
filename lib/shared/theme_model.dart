@@ -36,8 +36,13 @@ class Themes {
 
   static highContrastTheme() {
     return ThemeData(
+      primaryColor: Colors.green,
         cardColor: Colors.black26,
         textTheme: TextTheme(
+          headline1:    TextStyle(
+            fontSize: 40,
+            color: Colors.yellow),
+
             bodyText2: TextStyle(
                 fontSize: 50,
                 color: Colors.yellow)));
