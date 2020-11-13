@@ -139,9 +139,24 @@ class Cart extends ChangeNotifier {
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }
 
-  /// Este metodo retorna se existir pelo menos 1 item selecionado em [itemList]
+  /// Este metodo retorna true se existir pelo menos 1 item selecionado em [itemList]
   hasSelectedItems(){
     return (itemList.any((item) => item.selected));
+  }
+
+  /// Este metodo retorna true se existir pelo menos 1 item em [itemList]
+  hasItems(){
+    return (itemList.length > 0);
+  }
+
+  /// Este metodo retorna true se existir pelo menos 1 item comprado em [itemList]
+  hasUnDoneItems(){
+    return (itemList.any((item) => !item.isDone));
+  }
+
+  /// Este metodo retorna true se existir pelo menos 1 item comprado em [itemList]
+  hasDoneItems(){
+    return (itemList.any((item) => item.isDone));
   }
 
   /// Disjuncao logica (Equals): compara se dois objetos [Item] sao iguais.
