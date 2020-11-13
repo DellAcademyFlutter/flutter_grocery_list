@@ -17,6 +17,26 @@ class Item {
   bool selected = false;
   bool isDone = false;
 
+  Item.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    qtt = json['qtt'];
+    name = json['name'];
+    value = json['value'];
+    selected = json['selected'];
+    isDone = json['isDone'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['id'] = this.id;
+    data['qtt'] = this.qtt;
+    data['name'] = this.name;
+    data['value'] = this.value;
+    data['selected'] = this.selected;
+    data['isDone'] = this.isDone;
+    return data;
+  }
+
   //****************************************************************************
   // Metodos da classe
   //****************************************************************************

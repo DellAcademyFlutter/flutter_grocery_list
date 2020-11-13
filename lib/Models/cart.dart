@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_grocery_list/shared/math_utils.dart';
+import 'package:flutter_grocery_list/shared_preferences/shared_prefs.dart';
 import 'item.dart';
 
 /// Esta classe implementa o objeto [Model] de um carrinho [Cart].
@@ -33,6 +36,10 @@ class Cart extends ChangeNotifier {
     itemList.add(item);
     totalValue += item.value;
     qttItems++;
+
+    SharedPrefs.save("feira", jsonEncode(item.toJson()));
+
+    SharedPrefs.read("feira").then((value) => debugPrint("feira ${value}"));
 
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }

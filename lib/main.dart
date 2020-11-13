@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Viewers/home_page.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:flutter_grocery_list/shared_preferences/shared_prefs.dart';
+import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:get_it/get_it.dart';
 import 'Models/cart.dart';
 import 'Models/user.dart';
@@ -14,6 +15,7 @@ void main() {
   GetIt.I.registerSingleton<ThemeModel>(ThemeModel()); // Um singleton [ThemeModel]
   GetIt.I.registerSingleton<User>(User()); // Um singleton de User
 
+  Stetho.initialize();
   // Execucao do aplicativo
   runApp(MyApp());
 }
