@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_grocery_list/Models/cart.dart';
+import 'package:flutter_grocery_list/Models/item.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
+import 'package:flutter_grocery_list/Models/userList.dart';
 import 'package:flutter_grocery_list/local/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
-
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -14,6 +18,7 @@ class LoginPage extends StatefulWidget {
 class _State extends State<LoginPage> {
   TextEditingController nameController = TextEditingController();
   final loggedUser = GetIt.I<User>();
+  final userList = GetIt.I<UserList>();
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +66,32 @@ class _State extends State<LoginPage> {
                               builder: (context) =>
                                   MyHomePage(title: 'Carrinho')),
                         );
+                        importItemToLocalStorage(nameController.text);
                       },
                     )),
               ],
             )));
+  }
+
+  /// Verifica se o usuário já possui algum carrinho salvo
+  importItemToLocalStorage(String userName) async {
+    // Ler todas as keys em Local Storage.
+    SharedPrefs.getKeysCollection().then((value) {
+      final cartlist = GetIt.I<Cart>();
+
+      String key;
+
+      for (int i = 0; i < value.length; i++) {
+        key = value.elementAt(i);
+
+        if (key.contains(userName)) {
+          SharedPrefs.read(key).then((value) {
+            Item item = Item.fromJson(jsonDecode(value));
+            cartlist.addItem(item.id, item.user, item.name, item.value,
+                item.amount, item.isDone);
+          });
+        }
+      }
+    });
   }
 }

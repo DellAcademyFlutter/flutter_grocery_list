@@ -16,6 +16,11 @@ class SharedPrefs{
     return prefs.containsKey(key);
   }
 
+  static Future<Set<String>> getKeysCollection() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getKeys();
+  }
+
   static Future remove(String key) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove(key);

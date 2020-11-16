@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
+import 'package:flutter_grocery_list/Models/userList.dart';
 import 'package:flutter_grocery_list/Viewers/home_page.dart';
 import 'package:flutter_grocery_list/Viewers/login_page.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
+import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:get_it/get_it.dart';
 import 'Models/cart.dart';
 import 'local/shared_prefs.dart';
@@ -15,6 +17,8 @@ void main() {
   GetIt.I.registerSingleton<Cart>(Cart()); // Um Singleton de [Cart].
   GetIt.I.registerSingleton<ThemeModel>(ThemeModel()); // Um Singleton de [ThemeModel].
   GetIt.I.registerSingleton<User>(User()); // Um singleton de User
+  GetIt.I.registerSingleton<UserList>(UserList()); // Um singleton de User
+  Stetho.initialize();
 
   // Execucao do aplicativo
   runApp(MyApp());
@@ -23,6 +27,7 @@ void main() {
 class MyApp extends StatelessWidget {
   final themeModel = GetIt.I<ThemeModel>();
   final loggedUser = GetIt.I<User>();
+  final cartList = GetIt.I<Cart>();
 
   @override
   Widget build(BuildContext context) {

@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
+import 'package:flutter_grocery_list/Models/userList.dart';
 import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:flutter_grocery_list/local/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
-
 import 'login_page.dart';
 
 /// Esta classe implementa a pagina de perfil de [User].
@@ -127,6 +127,8 @@ class CartInformations extends StatelessWidget {
 /// Esta classe retorna um widget de logout de [User]
 class Logout extends StatelessWidget {
   final loggedUser = GetIt.I<User>();
+  final cart = GetIt.I<Cart>();
+  final userList = GetIt.I<UserList>();
 
   @override
   Widget build(BuildContext context) {
@@ -134,8 +136,12 @@ class Logout extends StatelessWidget {
         onTap: () {
           SharedPrefs.contains("loggedUser").then((value) {
             if (value) {
+              cart.exportItemToLocalStorage(loggedUser.name);
+              userList.addUser(loggedUser);
               loggedUser.name = null;
               SharedPrefs.remove("loggedUser");
+
+              cart.removeAll();
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_grocery_list/local/shared_prefs.dart';
 import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'item.dart';
 
@@ -22,32 +25,32 @@ class Cart extends ChangeNotifier {
   // Metodos da classe
   //****************************************************************************
   /// Este metodo adiciona um item de [cartList].
-  addItem(int id, String name, double value, int qtt) {
-    Item item = Item(
-        id: cartList.length + 1,
-        name: name,
-        value: value,
-        amount: 1
-    );
+  addItem(int id, String userName, String name, double value, int qtt, bool isDone) {
+    Item item =
+        Item(id: cartList.length + 1, user: userName, name: name, value: value, amount: 1, isDone: isDone);
     cartList.add(item);
     totalValueCart += item.value;
     amountItems++;
 
+    exportItemToLocalStorage(userName);
+
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }
 
+  //Salva no local Storage todos os itens do carrinho
+  exportItemToLocalStorage(String userName) {
+    for (int i = 0; i < cartList.length; i++) {
+      SharedPrefs.save("${userName}_item_ ${i}", jsonEncode(cartList[i]));
+    }
+  }
+
   /// Este metodo atualiza um item de [cartList].
-  updateItem(int id, String name, double value, int qtt) {
-    final item = Item(
-        id: id,
-        name: name,
-        value: value,
-        amount: qtt
-    );
+  updateItem(int id, String user, String name, double value, int qtt) {
+    final item = Item(id: id, user: user, name: name, value: value, amount: qtt);
 
     final index = cartList.indexOf(item);
     // Atualiza o preco total do carrinho
-    totalValueCart -= cartList[index].value*cartList[index].amount;
+    totalValueCart -= cartList[index].value * cartList[index].amount;
     amountItems -= cartList[index].amount;
     // Remove o item
     cartList.removeAt(index);
@@ -55,7 +58,7 @@ class Cart extends ChangeNotifier {
     // Adiciona o novo item atualizado
     cartList.insert(index, item);
     // Modifica o novo preco
-    totalValueCart += cartList[index].value*cartList[index].amount;
+    totalValueCart += cartList[index].value * cartList[index].amount;
 
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }
@@ -63,7 +66,7 @@ class Cart extends ChangeNotifier {
   /// Este metodo remove um item de [cartList] baseado em um indice [index].
   removeItem(int index) {
     // Atualiza o preco total do carrinho
-    totalValueCart -= cartList[index].value*cartList[index].amount;
+    totalValueCart -= cartList[index].value * cartList[index].amount;
     // Remove o item
     amountItems -= cartList[index].amount;
     cartList.removeAt(index);
@@ -71,10 +74,18 @@ class Cart extends ChangeNotifier {
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }
 
+  /// Este metodo remove um item de [cartList] baseado em um indice [index].
+  removeAll() {
+    totalValueCart = 0;
+    amountItems = 0;
+    cartList.clear();
+    notifyListeners(); // Notifica aos observadores uma mudanca na lista.
+  }
+
   /// Este metodo realiza um check todos os itens selecionados.
   checkSelectedItems() {
     // Percorre todos os itens do carrinho.
-    for (int i = cartList.length-1; i > -1; i--) {
+    for (int i = cartList.length - 1; i > -1; i--) {
       if (cartList[i].selected) {
         // Marca o item.
         cartList[i].isDone = !cartList[i].isDone;
@@ -88,10 +99,10 @@ class Cart extends ChangeNotifier {
   /// Este metodo remove todos os itens selecionados.
   removeSelectedItems() {
     // Percorre todos os itens do carrinho.
-    for (int i = cartList.length-1; i > -1; i--) {
+    for (int i = cartList.length - 1; i > -1; i--) {
       if (cartList[i].selected) {
         // Atualiza o preco total do carrinho
-        totalValueCart -= cartList[i].value*cartList[i].amount;
+        totalValueCart -= cartList[i].value * cartList[i].amount;
         amountItems -= cartList[i].amount;
         // Remove o item
         cartList.removeAt(i);
@@ -102,7 +113,7 @@ class Cart extends ChangeNotifier {
   }
 
   /// Este metodo aumenta a quantidade de um item especificado por seu [index]
-  increaseAmount(index){
+  increaseAmount(index) {
     cartList[index].amount++;
     amountItems++;
 
@@ -111,7 +122,7 @@ class Cart extends ChangeNotifier {
   }
 
   /// Este metodo aumenta a quantidade de um item especificado por seu [index]
-  decreaseAmount(index){
+  decreaseAmount(index) {
     if (cartList[index].amount > 1) {
       cartList[index].amount--;
       amountItems--;
@@ -120,7 +131,6 @@ class Cart extends ChangeNotifier {
       notifyListeners(); // Notifica aos observadores uma mudanca na lista.
     }
   }
-
 
   /// Este metodo marca true no atributo select deste [item]
   selectItem(index) {
@@ -137,22 +147,22 @@ class Cart extends ChangeNotifier {
   }
 
   /// Este metodo retorna se existir pelo menos 1 item selecionado em [cartList]
-  hasSelectedItems(){
+  hasSelectedItems() {
     return (cartList.any((item) => item.selected));
   }
 
   /// Este metodo retorna true se existir pelo menos 1 item em [itemList]
-  hasItems(){
+  hasItems() {
     return (cartList.length > 0);
   }
 
   /// Este metodo retorna true se existir pelo menos 1 item comprado em [itemList]
-  hasUnDoneItems(){
+  hasUnDoneItems() {
     return (cartList.any((item) => !item.isDone));
   }
 
   /// Este metodo retorna true se existir pelo menos 1 item comprado em [itemList]
-  hasDoneItems(){
+  hasDoneItems() {
     return (cartList.any((item) => item.isDone));
   }
 
@@ -160,7 +170,7 @@ class Cart extends ChangeNotifier {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Item && runtimeType == other.runtimeType && id == other.id;
+      other is Item && runtimeType == other.runtimeType && id == other.id;
 
   /// hashCode: codigo para identificacao unica deste carrinho.
   @override

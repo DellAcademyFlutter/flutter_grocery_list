@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
+import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:get_it/get_it.dart';
 import '../Models/item.dart';
 
@@ -24,6 +25,7 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
   String itemName = '';
   String itemDescription = '';
   double itemValue = 0.0;
+  final loggedUser = GetIt.I<User>();
 
   bool isEdit;
 
@@ -105,13 +107,13 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
                   if (isEdit) {
                     // Realiza a edicao do item
                     if ((itemName != widget.item.name || itemValue != widget.item.value))
-                      widget.cart.updateItem(widget.item.id, itemName,
-                           itemValue, widget.item.amount);
+                      widget.cart.updateItem(widget.item.id, loggedUser.name,
+                          itemName, itemValue, widget.item.amount);
                   } else {
                     if (itemName != ''){
                       // Realiza a adicao do item
                       widget.cart.addItem(widget.cart.cartList.length + 1,
-                          itemName, itemValue, 1);
+                          loggedUser.name, itemName, itemValue, 1, false);
                     } else{
                       return null;
                     }
