@@ -11,7 +11,6 @@ class ThemeModel extends ChangeNotifier{
   set isDarkTheme(bool value) {
     _isDarkTheme = value;
 
-    SharedPrefs.save("isDarkTheme", value.toString());
     notifyListeners();
   }
 

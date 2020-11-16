@@ -134,6 +134,7 @@ class CartInformations extends StatelessWidget {
 
 /// Esta classe retorna um widget de logout de [User]
 class Logout extends StatelessWidget {
+  final cart = GetIt.I<Cart>();
   final loggedUser = GetIt.I<User>();
 
   @override
@@ -144,6 +145,7 @@ class Logout extends StatelessWidget {
             if (value) {
               loggedUser.name = null;
               SharedPrefs.remove("loggedUser");
+              cart.clean(); // limpa o carrinho.
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

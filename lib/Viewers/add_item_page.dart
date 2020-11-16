@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
+import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:get_it/get_it.dart';
 import '../Models/item.dart';
 
@@ -9,6 +10,7 @@ class CreateEditItemPage extends StatefulWidget {
   CreateEditItemPage({this.item});
 
   final cart = GetIt.I<Cart>();
+  final loggedUser = GetIt.I<User>();
   final Item item;
 
   @override
@@ -120,13 +122,13 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
                           if ((itemName != widget.item.name ||
                               itemDescription != widget.item.description ||
                               itemValue != widget.item.value))
-                            widget.cart.updateItem(widget.item.id, itemName,
-                                itemDescription, itemValue, widget.item.qtt);
+                            widget.cart.updateItem(widget.item.id, widget.loggedUser.name, itemName,
+                                itemDescription, itemValue, widget.item.qtt, widget.item.isDone);
                         } else {
                           if (itemName != '' || itemDescription != '') {
                             // Realiza a adicao do item
-                            widget.cart.addItem(widget.cart.itemList.length + 1,
-                                itemName, itemDescription, itemValue, 1);
+                            widget.cart.addItem(widget.cart.itemList.length + 1, widget.loggedUser.name,
+                                itemName, itemDescription, itemValue, 1, false);
                           } else {
                             return null;
                           }

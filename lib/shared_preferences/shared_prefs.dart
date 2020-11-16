@@ -21,4 +21,14 @@ class SharedPrefs{
     final prefs = await SharedPreferences.getInstance();
     prefs.remove(key);
   }
+
+  static Future<Set<String>> getAllKeys() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getKeys();
+  }
+
+  static Future removeAll() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+  }
 }

@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
+import 'package:flutter_grocery_list/shared_preferences/load_items.dart';
 import 'package:flutter_grocery_list/shared_preferences/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
 import 'home_page.dart';
@@ -39,7 +42,7 @@ class _State extends State<LoginPage> {
                   child: TextField(
                     controller: nameController,
                     onChanged: (valor) =>
-                        setState(() => userName = valor),
+                        setState(() => userName = valor.trim().toLowerCase()),
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'User Name',
@@ -54,7 +57,15 @@ class _State extends State<LoginPage> {
                       color: Colors.blue,
                       child: Text('Login'),
                       onPressed: () {
+                        loggedUser.name = userName;
                         SharedPrefs.save("loggedUser", userName);
+                        SharedPrefs.contains(userName).then((value) {
+                          if (!value){
+                            // TODO: ajeitar ID zero.
+                            User user = User(id: 0, name: userName);
+                            SharedPrefs.save(userName, jsonEncode(user.toJson()));
+                          }
+                        });
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(

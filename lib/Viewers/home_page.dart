@@ -4,11 +4,10 @@ import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:flutter_grocery_list/Viewers/items_pages.dart';
 import 'package:flutter_grocery_list/Viewers/profile_page.dart';
-import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
+import 'package:flutter_grocery_list/shared_preferences/load_items.dart';
 import 'package:flutter_grocery_list/shared_preferences/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
-import 'login_page.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -28,6 +27,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     appBarColor = Colors.blue;
+    LoadItems.load(); // carregar seu carrinho
+    //SharedPrefs.removeAll();
   }
 
   @override
