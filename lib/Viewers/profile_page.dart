@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
+import 'package:flutter_grocery_list/Models/settings.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
@@ -35,8 +36,8 @@ class BuildProfilePage extends StatefulWidget {
 class _BuildProfilePageState extends State<BuildProfilePage> {
   final cart = GetIt.I<Cart>();
   final loggedUser = GetIt.I<User>();
+  final settings = GetIt.I<Settings>();
   bool isSwitched = false;
-
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,7 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
           ),
           Text(
             "${loggedUser.name}",
-            style: TextStyle(fontSize: 20, color: Colors.black),
+            //style: TextStyle(fontSize: 20, color: Colors.black),
           ),
           SizedBox(height: 20.0),
         ListTile(
@@ -85,7 +86,7 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
               onChanged: (value) {
                 setState(() {
                   isSwitched = value;
-                  GetIt.I<ThemeModel>().changeTheme();
+                  settings.themeModel.changeTheme();
                 });
               },
               activeTrackColor: Colors.blue,
@@ -104,6 +105,28 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
             ),
             trailing: Logout(),
             isThreeLine: true,
+          ),
+          AnimatedBuilder(
+            animation: settings,
+            builder: (context, widget) {
+              return ListTile(
+                title: Text(
+                  'Font Size',
+                //  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                  'Aumento de fonte - ${settings.fontSize}',
+                  style: TextStyle(fontSize: 18),
+                ),
+                trailing: Container(
+                  child: InkWell(
+                    onTap: ()=>settings.increment(),
+                    child: Text("+"),
+                  ),
+                ),
+                isThreeLine: true,
+              );
+            }
           )
         ],
       ),
