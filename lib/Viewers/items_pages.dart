@@ -29,7 +29,6 @@ class ItemsPage extends StatelessWidget {
 Widget buildItemCards(bool doneItems) {
   final cart = GetIt.I<Cart>();
   return (doneItems) ? listDoneItems() : listUndoneItems();
-
 }
 
 class listDoneItems extends StatelessWidget {
@@ -37,7 +36,9 @@ class listDoneItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (cart.hasDoneItems() == false) ? EmptyItemsMessage(doneItems: true) : ListItems(doneItems: true);
+    return (cart.hasDoneItems() == false)
+        ? EmptyItemsMessage(doneItems: true)
+        : ListItems(doneItems: true);
   }
 }
 
@@ -46,7 +47,9 @@ class listUndoneItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (cart.hasUnDoneItems()) ? ListItems(doneItems: false) : EmptyItemsMessage(doneItems: false);
+    return (cart.hasUnDoneItems())
+        ? ListItems(doneItems: false)
+        : EmptyItemsMessage(doneItems: false);
   }
 }
 
@@ -60,13 +63,12 @@ class ListItems extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         child: ListView.builder(
-          itemCount: cart.itemList.length,
-          itemBuilder: (context, index) => getScrollableItemCard(
-              context, index, doneItems), // Sem Context e index
-        ));
+      itemCount: cart.itemList.length,
+      itemBuilder: (context, index) => getScrollableItemCard(
+          context, index, doneItems), // Sem Context e index
+    ));
   }
 }
-
 
 /// Widget utilizado para exibicao dos itens do carrinho [cart]
 Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
@@ -83,15 +85,10 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 margin: EdgeInsets.symmetric(vertical: 4),
-                color: cart.itemList[index].selected
-                    ? Colors.red[100]
-                    : Colors.white,
                 child: Card(
                   color: cart.itemList[index].selected
                       ? Colors.blue
-                      : cart.itemList[index].isDone
-                          ? Colors.lightGreen[400]
-                          : Colors.grey[300],
+                      : Colors.transparent,
                   child: Container(
                     margin: EdgeInsets.all(0.0),
                     child: Padding(
@@ -100,20 +97,17 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
                         ListTile(
                           title: Text('${cart.itemList[index].name}',
                               style: TextStyle(
-                                  fontSize: 25,
-                                  color: Colors.black,
                                   decoration: cart.itemList[index].isDone
                                       ? TextDecoration.lineThrough
                                       : null)),
-                          subtitle: Text(
-                            '${cart.itemList[index].description}',
-                            style: TextStyle(fontSize: 15),
-                          ),
+                          subtitle: Text('${cart.itemList[index].description}',
+                              style: TextStyle(
+                                  decoration: cart.itemList[index].isDone
+                                      ? TextDecoration.lineThrough
+                                      : null)),
                           trailing: Text(
                               'R\$ ${MathUtils.round(cart.itemList[index].value * cart.itemList[index].qtt, 2).toString()}',
                               style: TextStyle(
-                                  fontSize: 25,
-                                  color: Colors.black,
                                   decoration: cart.itemList[index].isDone
                                       ? TextDecoration.lineThrough
                                       : null)),
@@ -124,8 +118,6 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
                               child: Icon(Icons.add, color: Colors.green[800])),
                           Text('${cart.itemList[index].qtt}',
                               style: TextStyle(
-                                  fontSize: 25,
-                                  color: Colors.black,
                                   decoration: cart.itemList[index].isDone
                                       ? TextDecoration.lineThrough
                                       : null)),
@@ -154,7 +146,6 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
                           FlatButton(
                             child: Text(
                               "Cancelar",
-                              style: TextStyle(color: Colors.black),
                             ),
                             onPressed: () {
                               Navigator.of(context).pop();
@@ -163,7 +154,6 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
                           FlatButton(
                             child: Text(
                               "Remover",
-                              style: TextStyle(color: Colors.red),
                             ),
                             onPressed: () {
                               //Remove o lista no index selecionado
@@ -207,10 +197,6 @@ Widget slideRightBackground() {
           ),
           Text(
             " Editar",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w300,
-            ),
             textAlign: TextAlign.left,
           ),
         ],
@@ -234,10 +220,6 @@ Widget slideLeftBackground() {
           ),
           Text(
             " Remover",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w300,
-            ),
             textAlign: TextAlign.right,
           ),
           //Espaçamento no final
@@ -338,7 +320,6 @@ class EmptyItemsMessage extends StatelessWidget {
       child: Container(
         child: Text(
           doneItems ? "Não há items comprados." : "Não há items para comprar.",
-          style: TextStyle(fontSize: 25, color: Colors.black),
         ),
       ),
     );

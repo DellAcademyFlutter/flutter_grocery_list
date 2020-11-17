@@ -138,9 +138,6 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
                     : null,
                 child: Text(
                   textHint,
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
                 ),
                 color: Colors.blue,
               )

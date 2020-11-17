@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Models/settings.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
-import 'package:flutter_grocery_list/shared/math_utils.dart';
-import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:flutter_grocery_list/shared_preferences/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
 
@@ -17,146 +15,260 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-        animation: cart,
-        builder: (context, w) {
-          return Scaffold(
-            body: BuildProfilePage(),
-          );
-        });
+    return Scaffold(
+      body: BuildProfilePage(),
+    );
   }
 }
 
 /// Esta classe retorna o widget da pagina perfil do [User].
-class BuildProfilePage extends StatefulWidget {
-  @override
-  _BuildProfilePageState createState() => _BuildProfilePageState();
-}
-
-class _BuildProfilePageState extends State<BuildProfilePage> {
+class BuildProfilePage extends StatelessWidget {
   final cart = GetIt.I<Cart>();
   final loggedUser = GetIt.I<User>();
   final settings = GetIt.I<Settings>();
-  bool isSwitched = false;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
-      child: Column(
+      child: ListView(
         children: [
-          CircleAvatar(
-            radius: 100.0,
-            backgroundImage: NetworkImage(
-                "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"),
-            backgroundColor: Colors.transparent,
-          ),
-          Text(
-            "${loggedUser.name}",
-            //style: TextStyle(fontSize: 20, color: Colors.black),
-          ),
+          UserIconLabel(),
           SizedBox(height: 20.0),
-        ListTile(
-          title:Text(
-            "Quantidade de produtos: ",
-            style: TextStyle(fontSize: 20, color: Colors.black),
-          ),
-          trailing: Text("${cart.qttItems}",
-              style: TextStyle(fontSize: 20, color: Colors.black),),
-        ),
-          ListTile(
-            title:Text(
-              "Valor total da lista de produtos: ",
-              style: TextStyle(fontSize: 20, color: Colors.black),
-            ),
-            trailing: Text("${cart.totalValue}",
-              style: TextStyle(fontSize: 20, color: Colors.black),),
-          ),
-          ListTile(
-            title: Text(
-              'Alto-contraste',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(
-              'Maior diferença de luminância/cor entre objetos (ajuda a distinguir melhor).',
-              style: TextStyle(fontSize: 18),
-            ),
-            trailing: Switch(
-              value: isSwitched,
-              onChanged: (value) {
-                setState(() {
-                  isSwitched = value;
-                  settings.themeModel.changeTheme();
-                });
-              },
-              activeTrackColor: Colors.blue,
-              activeColor: Colors.blue,
-            ),
-            isThreeLine: true,
-          ),
-          ListTile(
-            title: Text(
-              'Logout',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(
-              'Clique no botão ao lado para sair de sua conta.',
-              style: TextStyle(fontSize: 18),
-            ),
-            trailing: Logout(),
-            isThreeLine: true,
-          ),
-          AnimatedBuilder(
-            animation: settings,
-            builder: (context, widget) {
-              return ListTile(
-                title: Text(
-                  'Font Size',
-                //  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  'Aumento de fonte - ${settings.fontSize}',
-                  style: TextStyle(fontSize: 18),
-                ),
-                trailing: Container(
-                  child: InkWell(
-                    onTap: ()=>settings.increment(),
-                    child: Text("+"),
-                  ),
-                ),
-                isThreeLine: true,
-              );
-            }
-          )
+          CartQttItems(),
+          CartTotalValue(),
+          HighContrastSettings(),
+          TextSize(),
+          Logout(),
         ],
       ),
     );
   }
 }
 
-/// Esta classe retorna um widget mensagem com o valor total do [Cart].
-class CartInformations extends StatelessWidget {
-  final cart = GetIt.I<Cart>();
+/// Esta classe retorna um widget com [CircleAvatar] e [Text] referentes ao [User].
+class UserIconLabel extends StatelessWidget {
+  final loggedUser = GetIt.I<User>();
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title:Text(
-        "Qtd. produtos: ${cart.qttItems}",
-        style: TextStyle(fontSize: 15, color: Colors.black),
-        textAlign: TextAlign.center,
-      ),
-      subtitle: Text(
-        "Valor total: R\$ ${MathUtils.round(cart.totalValue, 3)}",
-        style: TextStyle(fontSize: 15, color: Colors.black),
-        textAlign: TextAlign.center,
-      ),
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 100.0,
+          backgroundImage: NetworkImage(
+              "https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png"),
+          backgroundColor: Colors.transparent,
+        ),
+        Text(
+          "${loggedUser.name}",
+        ),
+      ],
     );
   }
 }
 
-/// Esta classe retorna um widget de logout de [User]
+/// Esta classe retorna um widget mensagem com a quantidade de items do [Cart].
+class CartQttItems extends StatelessWidget {
+  final cart = GetIt.I<Cart>();
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+        animation: cart,
+        builder: (context, widget) {
+          return Card(
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text(
+                      "Quantidade de produtos: ",
+                      textAlign: TextAlign.left,
+                    ),
+                    Spacer(),
+                    Text(
+                      "${cart.qttItems}",
+                      textAlign: TextAlign.right,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+}
+
+/// Esta classe retorna um widget mensagem com a quantidade de items do [Cart].
+class CartTotalValue extends StatelessWidget {
+  final cart = GetIt.I<Cart>();
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+        animation: cart,
+        builder: (context, widget) {
+          return Card(
+            child: Container(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Text(
+                      "Valor total do carrinho: ",
+                      textAlign: TextAlign.left,
+                    ),
+                    Spacer(),
+                    Text(
+                      "R\$ ${cart.totalValue}",
+                      textAlign: TextAlign.right,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+}
+
+/// Esta classe retorna um widget referente a configuracao do contraste das cores.
+class HighContrastSettings extends StatefulWidget {
+  @override
+  HighContrastSettingsState createState() => HighContrastSettingsState();
+}
+
+/// Esta classe retorna um widget referente ao estado da configuracao do contraste das cores.
+class HighContrastSettingsState extends State<HighContrastSettings> {
+  final settings = GetIt.I<Settings>();
+  bool isSwitched = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                'Alto-contraste',
+                textAlign: TextAlign.center,
+              ),
+              Spacer(),
+              Switch(
+                value: isSwitched,
+                onChanged: (value) {
+                  setState(() {
+                    isSwitched = value;
+                    settings.themeModel.changeTheme();
+                  });
+                },
+                activeTrackColor: Colors.blue,
+                activeColor: Colors.blue,
+              ),
+            ],
+          ),
+          Container(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Maior diferença de luminância/cor entre objetos (ajuda a distinguir melhor).',
+              style: Theme.of(context).textTheme.subtitle2,
+            ),
+          ),
+        ],
+      ),
+    ));
+  }
+}
+
+/// Esta classe retorna um widget referente a configuracao do tamanho da fonte.
+class TextSize extends StatelessWidget {
+  final settings = GetIt.I<Settings>();
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+        animation: settings,
+        builder: (context, widget) {
+          return Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Container(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      'Tamanho da fonte',
+                    ),
+                  ),
+                  TextSizeSlider(),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+}
+
+/// Esta classe retorna um widget com slider referente ao tamanho da fonte.
+class TextSizeSlider extends StatelessWidget {
+  final settings = GetIt.I<Settings>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Slider(
+      value: settings.fontSize,
+      min: 8,
+      max: 18,
+      divisions: 5,
+      label: "${settings.fontSize}",
+      onChanged: (newSliderValue) {
+        settings.fontSize = newSliderValue;
+      },
+    );
+  }
+}
+
+/// Esta classe retorna um widget referente a configuracao do tamanho da fonte.
 class Logout extends StatelessWidget {
+  final settings = GetIt.I<Settings>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                'Logout',
+                textAlign: TextAlign.left,
+              ),
+              Spacer(),
+              LogoutButton(),
+            ],
+          ),
+          Container(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Clique no botão ao lado para sair de sua conta.',
+              style: Theme.of(context).textTheme.subtitle2,
+            ),
+          ),
+        ],
+      ),
+    ));
+  }
+}
+
+/// Esta classe retorna um widget de logout de [User]
+class LogoutButton extends StatelessWidget {
   final cart = GetIt.I<Cart>();
   final loggedUser = GetIt.I<User>();
 
@@ -171,9 +283,7 @@ class Logout extends StatelessWidget {
               cart.clean(); // limpa o carrinho.
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        LoginPage()),
+                MaterialPageRoute(builder: (context) => LoginPage()),
               );
             } else {
               Navigator.of(context).push(
@@ -184,6 +294,9 @@ class Logout extends StatelessWidget {
             }
           });
         },
-        child: Icon(Icons.power_settings_new, semanticLabel: "logout",));
+        child: Icon(
+          Icons.power_settings_new,
+          semanticLabel: "logout",
+        ));
   }
 }

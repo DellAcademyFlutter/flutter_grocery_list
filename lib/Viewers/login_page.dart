@@ -32,10 +32,6 @@ class _State extends State<LoginPage> {
                     padding: EdgeInsets.all(10),
                     child: Text(
                       'Defina seu perfil',
-                      style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 30),
                     )),
                 Container(
                   padding: EdgeInsets.all(10),

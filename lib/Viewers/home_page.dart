@@ -21,12 +21,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final cart = GetIt.I<Cart>();
   final loggedUser = GetIt.I<User>();
-  Color appBarColor;
 
   @override
   void initState() {
     super.initState();
-    appBarColor = Colors.blue;
     LoadItems.load(); // carregar seu carrinho
     //SharedPrefs.removeAll();
   }
@@ -52,14 +50,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: <Widget>[
                     Column(
                       children: [
-                        Text("Lista de compras de ${loggedUser?.name == null ? "nulo" : loggedUser.name}",
-                        style: TextStyle(fontSize: 20.0),),
+                        Text("Lista de compras de ${loggedUser?.name == null ? "nulo" : loggedUser.name}"),
                       ],
                     ),
                   ],
                 ),
-                backgroundColor:
-                cart.hasSelectedItems() ? Colors.blue[900] : Colors.blue,
                 actions: <Widget>[
                   cart.hasSelectedItems()
                       ? Row(

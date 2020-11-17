@@ -76,7 +76,7 @@ class Cart extends ChangeNotifier {
     qttItems -= itemList[index].qtt;
 
     // Remove o item em Local Storage
-    SharedPrefs.remove("item_${itemList[index].id}");
+    SharedPrefs.remove("item_${itemList[index].fqUserId}_${itemList[index].id}");
 
     // Remove o item
     itemList.removeAt(index);
@@ -112,7 +112,7 @@ class Cart extends ChangeNotifier {
         qttItems -= itemList[i].qtt;
 
         // Remove o item em Local Storage
-        SharedPrefs.remove("item_${itemList[i].id}");
+        SharedPrefs.remove("item_${itemList[i].fqUserId}_${itemList[i].id}");
 
         // Remove o item
         itemList.removeAt(i);
