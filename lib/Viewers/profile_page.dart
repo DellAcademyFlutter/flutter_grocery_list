@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
+import 'package:flutter_grocery_list/Models/settings.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:flutter_grocery_list/Models/userList.dart';
 import 'package:flutter_grocery_list/shared/math_utils.dart';
@@ -35,73 +36,107 @@ class BuildProfilePage extends StatefulWidget {
 class _BuildProfilePageState extends State<BuildProfilePage> {
   final cart = GetIt.I<Cart>();
   final loggedUser = GetIt.I<User>();
+  final settings = GetIt.I<Settings>();
   final themeModel = GetIt.I<ThemeModel>();
   bool isSwitched = false;
-
 
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
-      child: Column(
+      child: ListView(
         children: [
-          SizedBox(height: 10),
-          CircleAvatar(
-            radius: 100,
-            backgroundColor: Color(0xffFDCF09),
-            child: CircleAvatar(
-              radius: 95,
-              backgroundImage: NetworkImage('https://images.vexels.com/media'
-                  '/users/3/137047/isolated/preview/''5831a17a290077c646a'
-                  '48c4db78a81bb---cone-de-perfil-de-usu--rio-azul-by-vexels.png'),
-            ),
+          Column(
+            children: [
+              SizedBox(height: 10),
+              CircleAvatar(
+                radius: 100,
+                backgroundColor: Color(0xffFDCF09),
+                child: CircleAvatar(
+                  radius: 95,
+                  backgroundColor: Colors.lightBlueAccent,
+                  backgroundImage: NetworkImage(
+                      'https://images.vexels.com/media'
+                      '/users/3/137047/isolated/preview/'
+                      '5831a17a290077c646a'
+                      '48c4db78a81bb---cone-de-perfil-de-usu--rio-azul-by-vexels.png'),
+                ),
+              ),
+              Text(
+                "${loggedUser.name}",
+              ),
+              SizedBox(height: 20.0),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    children: [
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Alto-contraste',
+                          ),
+                        ),
+                      Spacer(),
+                         Container(
+                           alignment: Alignment.centerRight,
+                           child: Switch(
+                            value: isSwitched,
+                            onChanged: (value) {
+                              setState(() {
+                                isSwitched = value;
+                                settings.themeModel.changeTheme();
+                              });
+                            },
+                            activeTrackColor: Colors.amber,
+                            activeColor: Colors.amber,
+                      ),
+                         ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 5),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          ' Tamanho do texto',
+                        ),
+                      ),
+                      TextSizeSlider(),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 5),
+              Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Row(
+                      children: [
+                          Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Sair',
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  ),
+                            ),
+                          ),
+                          Spacer(),
+                          Container(child: Logout()),
+                        SizedBox(width: 10),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
           ),
-          Text(
-            "${loggedUser.name}",
-            style: TextStyle(fontSize: 20, color: Colors.black),
-          ),
-          SizedBox(height: 20.0),
-          Card(
-            color: Colors.grey[300],
-            child: ListTile(
-              title: Text(
-                'Alto-contraste',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(
-                'Modo de alto-contraste',
-                style: TextStyle(fontSize: 18),
-              ),
-              trailing: Switch(
-                value: isSwitched,
-                onChanged: (value) {
-                  setState(() {
-                    isSwitched = value;
-                    themeModel.changeTheme();
-                  });
-                },
-                activeTrackColor: Colors.amber,
-                activeColor: Colors.amber,
-              ),
-              isThreeLine: true,
-            ),
-          ),
-          SizedBox(height: 5),
-          Card(
-            color: Colors.grey[300],
-            child: ListTile(
-              title: Text(
-                'Sair',
-                style: TextStyle(fontSize: 20, color: Colors.red, fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(
-                'Sair do perfil cadastrado.',
-                style: TextStyle(fontSize: 18),
-              ),
-              trailing: Logout(),
-              isThreeLine: true,
-            ),
-          )
         ],
       ),
     );
@@ -144,9 +179,7 @@ class Logout extends StatelessWidget {
               cart.removeAll();
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        LoginPage()),
+                MaterialPageRoute(builder: (context) => LoginPage()),
               );
             } else {
               Navigator.of(context).push(
@@ -157,6 +190,28 @@ class Logout extends StatelessWidget {
             }
           });
         },
-        child: Icon(Icons.power_settings_new, semanticLabel: "logout",));
+        child: Icon(
+          Icons.power_settings_new,
+          semanticLabel: "logout",
+        ));
+  }
+}
+
+/// Esta classe retorna um widget com slider referente ao tamanho da fonte.
+class TextSizeSlider extends StatelessWidget {
+  final settings = GetIt.I<Settings>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Slider(
+      value: settings.fontSize,
+      min: 10,
+      max: 35,
+      divisions: 5,
+      label: "${settings.fontSize}",
+      onChanged: (newSliderValue) {
+        settings.fontSize = newSliderValue;
+      },
+    );
   }
 }

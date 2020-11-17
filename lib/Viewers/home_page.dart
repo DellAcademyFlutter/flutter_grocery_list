@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Column(
                       children: [
                         Text("Carrinho de: ${loggedUser?.name == null ? "Nenhum perfil disponível" : loggedUser.name}",
-                          style: TextStyle(fontSize: 20.0, color: Colors.black),),
+                          style: TextStyle(color: Colors.black),),
                       ],
                     ),
                   ],

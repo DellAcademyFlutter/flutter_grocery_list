@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Models/item.dart';
+import 'package:flutter_grocery_list/Models/settings.dart';
 import 'package:flutter_grocery_list/Viewers/add_item_page.dart';
 import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'package:get_it/get_it.dart';
@@ -71,6 +72,7 @@ class ListItems extends StatelessWidget {
 /// Widget utilizado para exibicao dos itens do carrinho [cart]
 Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
   final cart = GetIt.I<Cart>();
+  final settings = GetIt.I<Settings>();
 
   return (cart.cartList[index].isDone == itemType)
       ? GestureDetector(
@@ -83,45 +85,46 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 margin: EdgeInsets.symmetric(vertical: 4),
-                color: cart.cartList[index].selected
-                    ? Colors.amber
-                    : Colors.white,
+                color: (cart.cartList[index].selected) ? Colors.amber : Colors.transparent,
                 child: Card(
-                  color: cart.cartList[index].selected
-                      ? Colors.lime
-                      : cart.cartList[index].isDone
-                          ? Colors.lightGreen[400]
-                          : Colors.grey[300],
                   child: Container(
                     margin: EdgeInsets.all(0.0),
                     child: Padding(
                       padding: EdgeInsets.all(10.0),
                       child: Column(children: <Widget>[
-                        ListTile(
-                          title: Text('${cart.cartList[index].name}',
-                              style: TextStyle(
-                                  fontSize: 25,
-                                  color: Colors.black,
-                                  decoration: cart.cartList[index].isDone
-                                      ? TextDecoration.lineThrough
-                                      : null)),
-                          trailing: Text(
-                              'R\$ ${MathUtils.round(cart.cartList[index].value * cart.cartList[index].amount, 2).toString()}',
-                              style: TextStyle(
-                                  fontSize: 25,
-                                  color: Colors.black,
-                                  decoration: cart.cartList[index].isDone
-                                      ? TextDecoration.lineThrough
-                                      : null)),
-                        ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text('${cart.cartList[index].name}',
+                                      style: TextStyle(
+                                          decoration: cart.cartList[index].isDone
+                                              ? TextDecoration.lineThrough
+                                              : null)),
+                                ),
+                                Spacer(),
+                                Container(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                      'R\$ ${MathUtils.round(cart.cartList[index].value * cart.cartList[index].amount, 2).toString()}',
+                                      style: TextStyle(
+                                          decoration: cart.cartList[index].isDone
+                                              ? TextDecoration.lineThrough
+                                              : null)),
+                                ),
+                              ],
+                            ),
+                          ),
+
+
                         Row(children: <Widget>[
                           InkWell(
                               onTap: () => cart.increaseAmount(index),
                               child: Icon(Icons.add, color: Colors.green[800])),
                           Text('${cart.cartList[index].amount}',
                               style: TextStyle(
-                                  fontSize: 25,
-                                  color: Colors.black,
                                   decoration: cart.cartList[index].isDone
                                       ? TextDecoration.lineThrough
                                       : null)),
@@ -204,7 +207,6 @@ Widget slideRightBackground() {
           Text(
             " Editar",
             style: TextStyle(
-              color: Colors.white,
               fontWeight: FontWeight.w300,
             ),
             textAlign: TextAlign.left,
@@ -231,7 +233,6 @@ Widget slideLeftBackground() {
           Text(
             " Remover",
             style: TextStyle(
-              color: Colors.white,
               fontWeight: FontWeight.w300,
             ),
             textAlign: TextAlign.right,
@@ -335,9 +336,9 @@ class EmptyItemsMessage extends StatelessWidget {
       child: Container(
         child: Text(
           doneItems ? "Itens colocados no seu carrinho" : "Você não tem nenhum lembrete",
-          style: TextStyle(fontSize: 25, color: Colors.black),
         ),
       ),
     );
   }
 }
+
