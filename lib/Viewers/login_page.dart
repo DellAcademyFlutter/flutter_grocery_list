@@ -61,12 +61,13 @@ class _State extends State<LoginPage> {
                             SharedPrefs.save(userName, jsonEncode(user.toJson()));
                           }
                         });
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  MyHomePage(title: 'Compras')),
-                        );
+                        Navigator.of(context).pushReplacementNamed('/home', arguments: "Israel");
+                        // Navigator.pushReplacement(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) =>
+                        //           MyHomePage(title: 'Compras')),
+                        // );
                       },
                     )),
               ],

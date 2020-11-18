@@ -50,7 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: <Widget>[
                     Column(
                       children: [
-                        Text("Compras de ${loggedUser?.name == null ? "nulo" : loggedUser.name}"),
+                        //Text("Compras de ${loggedUser?.name == null ? "nulo" : loggedUser.name}"),
+                        Text("Compras de ${ModalRoute.of(context).settings.arguments.toString()}"),
                       ],
                     ),
                   ],

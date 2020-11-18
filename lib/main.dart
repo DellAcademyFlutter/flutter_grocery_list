@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/settings.dart';
+import 'package:flutter_grocery_list/Viewers/add_item_page.dart';
 import 'package:flutter_grocery_list/Viewers/home_page.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:flutter_grocery_list/shared_preferences/load_user.dart';
@@ -37,9 +38,9 @@ class MyApp extends StatelessWidget {
               builder: (context, w) {
               return MaterialApp(
                 title: 'Flutter Demo',
-                home:  loggedUser.name != null ? MyHomePage(title: 'Compras') : LoginPage(),
-                theme: Themes.getAppTheme(),
-                themeMode: ThemeMode.dark,
+                //home:  loggedUser.name != null ? MyHomePage(title: 'Compras') : LoginPage(),
+                theme: Themes.defaultTheme(),
+                darkTheme: Themes.darkTheme(),
                 // theme: ThemeData(
                 //   brightness: settings.themeModel.isDarkTheme ? Brightness.dark : Brightness.light
                 // ),
@@ -47,6 +48,12 @@ class MyApp extends StatelessWidget {
                 builder: (context, child) {
                   LoadUser.load(); // Carrega o usuario
                   return child;
+                },
+                initialRoute: loggedUser.name != null ? '/home' : '/',
+                routes: {
+                  '/' : (context) => LoginPage(),
+                  '/home' : (context) => MyHomePage(title: 'Compras'),
+                  '/createItem' : (context) => CreateEditItemPage()
                 },
               );
             }
