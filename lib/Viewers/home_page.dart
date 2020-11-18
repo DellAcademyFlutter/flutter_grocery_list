@@ -50,11 +50,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: <Widget>[
                     Column(
                       children: [
-                        Text("Lista de compras de ${loggedUser?.name == null ? "nulo" : loggedUser.name}"),
+                        Text("Compras de ${loggedUser?.name == null ? "nulo" : loggedUser.name}"),
                       ],
                     ),
                   ],
                 ),
+                backgroundColor: cart.hasSelectedItems() ? Colors.blue[900] : null,
                 actions: <Widget>[
                   cart.hasSelectedItems()
                       ? Row(

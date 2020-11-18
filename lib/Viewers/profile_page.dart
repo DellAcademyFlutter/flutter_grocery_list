@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Models/settings.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
+import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:flutter_grocery_list/shared_preferences/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
 
@@ -38,6 +39,7 @@ class BuildProfilePage extends StatelessWidget {
           CartQttItems(),
           CartTotalValue(),
           HighContrastSettings(),
+          LightDarkTheme(),
           TextSize(),
           Logout(),
         ],
@@ -134,6 +136,74 @@ class CartTotalValue extends StatelessWidget {
   }
 }
 
+/// Esta classe retorna um widget referente a configuracao de tema escuro ou claro.
+class LightDarkTheme extends StatefulWidget {
+  @override
+  LightDarkThemeState createState() => LightDarkThemeState();
+}
+
+/// Esta classe retorna um widget referente ao estado da configuracao de tema escuro ou claro.
+class LightDarkThemeState extends State<LightDarkTheme> {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text('Tema'),
+        subtitle: Text('Escolha o tema de sua preferência'),
+        trailing: LightDarkThemeDropDownButton(),
+      ),
+    );
+  }
+}
+
+/// Esta classe retorna um widget de dropdown de menu escuro ou claro.
+class LightDarkThemeDropDownButton extends StatefulWidget {
+  LightDarkThemeDropDownButton({Key key}) : super(key: key);
+
+  @override
+  LightDarkThemeDropDownButtonState createState() =>
+      LightDarkThemeDropDownButtonState();
+}
+
+/// Esta classe retorna um widget de dropdown de menu escuro ou claro.
+class LightDarkThemeDropDownButtonState
+    extends State<LightDarkThemeDropDownButton> {
+  List<String> values = ['Sistema', 'Claro', 'Escuro'];
+  String dropdownValue = 'Sistema';
+  final settings = GetIt.I<Settings>();
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      value: dropdownValue.toString(),
+      icon: Icon(Icons.more_vert),
+      iconSize: 24,
+      elevation: 16,
+      underline: Container(
+        height: 2,
+      ),
+      onChanged: (String newValue) {
+        setState(() {
+          dropdownValue = newValue;
+          ThemeEnum theme;
+          switch(newValue){
+            case 'Sistema': theme = ThemeEnum.system; break;
+            case 'Escuro': theme = ThemeEnum.darkTheme; break;
+            default: theme = ThemeEnum.lightTheme; break;
+          }
+          settings.themeModel.changeTheme(theme, context);
+        });
+      },
+      items: values.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
+}
+
 /// Esta classe retorna um widget referente a configuracao do contraste das cores.
 class HighContrastSettings extends StatefulWidget {
   @override
@@ -164,7 +234,7 @@ class HighContrastSettingsState extends State<HighContrastSettings> {
                 onChanged: (value) {
                   setState(() {
                     isSwitched = value;
-                    settings.themeModel.changeTheme();
+                    settings.themeModel.changeTheme(isSwitched? ThemeEnum.highContrast : ThemeEnum.lightTheme, context);
                   });
                 },
                 activeTrackColor: Colors.blue,
@@ -176,7 +246,7 @@ class HighContrastSettingsState extends State<HighContrastSettings> {
             alignment: Alignment.centerLeft,
             child: Text(
               'Maior diferença de luminância/cor entre objetos (ajuda a distinguir melhor).',
-              style: Theme.of(context).textTheme.subtitle2,
+              style: Theme.of(context).textTheme.caption,
             ),
           ),
         ],
@@ -198,6 +268,7 @@ class TextSize extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     alignment: Alignment.topLeft,
@@ -205,7 +276,7 @@ class TextSize extends StatelessWidget {
                       'Tamanho da fonte',
                     ),
                   ),
-                  TextSizeSlider(),
+                  Container(child: TextSizeSlider()),
                 ],
               ),
             ),
@@ -220,15 +291,30 @@ class TextSizeSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Slider(
-      value: settings.fontSize,
-      min: 8,
-      max: 18,
-      divisions: 5,
-      label: "${settings.fontSize}",
-      onChanged: (newSliderValue) {
-        settings.fontSize = newSliderValue;
-      },
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Slider(
+            value: settings.fontSize,
+            min: 14,
+            max: 25,
+            divisions: 6,
+            label: "${settings.fontSize}",
+            onChanged: (newSliderValue) {
+              settings.fontSize = newSliderValue;
+            },
+          ),
+          RaisedButton(
+            child: Text('Tamanho padrão'),
+            onPressed: settings.fontSize == settings.defaultSize
+                ? null
+                : () {
+                    settings.fontSize = settings.defaultSize;
+                  },
+          )
+        ],
+      ),
     );
   }
 }

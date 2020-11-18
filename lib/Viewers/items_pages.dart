@@ -88,7 +88,7 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
                 child: Card(
                   color: cart.itemList[index].selected
                       ? Colors.blue
-                      : Colors.transparent,
+                      : null,
                   child: Container(
                     margin: EdgeInsets.all(0.0),
                     child: Padding(
@@ -193,7 +193,6 @@ Widget slideRightBackground() {
           ),
           Icon(
             Icons.edit,
-            color: Colors.white,
           ),
           Text(
             " Editar",
@@ -216,7 +215,6 @@ Widget slideLeftBackground() {
         children: <Widget>[
           Icon(
             Icons.delete,
-            color: Colors.white,
           ),
           Text(
             " Remover",

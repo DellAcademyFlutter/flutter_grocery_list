@@ -38,9 +38,8 @@ class MyApp extends StatelessWidget {
               return MaterialApp(
                 title: 'Flutter Demo',
                 home:  loggedUser.name != null ? MyHomePage(title: 'Compras') : LoginPage(),
-                theme: settings.themeModel.isDarkTheme
-                    ? Themes.highContrastTheme()
-                    : Themes.defaultTheme(),
+                theme: Themes.getAppTheme(),
+                themeMode: ThemeMode.dark,
                 // theme: ThemeData(
                 //   brightness: settings.themeModel.isDarkTheme ? Brightness.dark : Brightness.light
                 // ),
