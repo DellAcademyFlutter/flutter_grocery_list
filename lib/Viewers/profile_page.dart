@@ -39,6 +39,7 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
   final settings = GetIt.I<Settings>();
   final themeModel = GetIt.I<ThemeModel>();
   bool isSwitched = false;
+  double defaultFontSize = 10.5;
 
   @override
   Widget build(BuildContext context) {
@@ -49,21 +50,28 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
           Column(
             children: [
               SizedBox(height: 10),
-              CircleAvatar(
-                radius: 100,
-                backgroundColor: Color(0xffFDCF09),
-                child: CircleAvatar(
-                  radius: 95,
-                  backgroundColor: Colors.lightBlueAccent,
-                  backgroundImage: NetworkImage(
-                      'https://images.vexels.com/media'
-                      '/users/3/137047/isolated/preview/'
-                      '5831a17a290077c646a'
-                      '48c4db78a81bb---cone-de-perfil-de-usu--rio-azul-by-vexels.png'),
+              Container(
+                alignment: Alignment.center,
+                child: Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 100,
+                      backgroundColor: Color(0xffFDCF09),
+                      child: CircleAvatar(
+                        radius: 95,
+                        backgroundColor: Colors.lightBlueAccent,
+                        backgroundImage: NetworkImage(
+                            'https://images.vexels.com/media'
+                            '/users/3/137047/isolated/preview/'
+                            '5831a17a290077c646a'
+                            '48c4db78a81bb---cone-de-perfil-de-usu--rio-azul-by-vexels.png'),
+                      ),
+                    ),
+                    Text(
+                      "${loggedUser.name}",
+                    ),
+                  ],
                 ),
-              ),
-              Text(
-                "${loggedUser.name}",
               ),
               SizedBox(height: 20.0),
               Card(
@@ -71,27 +79,25 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
                   padding: const EdgeInsets.all(10.0),
                   child: Row(
                     children: [
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Alto-contraste',
-                          ),
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Alto-contraste',
                         ),
-                      Spacer(),
-                         Container(
-                           alignment: Alignment.centerRight,
-                           child: Switch(
-                            value: isSwitched,
-                            onChanged: (value) {
-                              setState(() {
-                                isSwitched = value;
-                                settings.themeModel.changeTheme();
-                              });
-                            },
-                            activeTrackColor: Colors.amber,
-                            activeColor: Colors.amber,
                       ),
-                         ),
+                      Spacer(),
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: Switch(
+                          value: isSwitched,
+                          onChanged: (value) {
+                              isSwitched = value;
+                              settings.themeModel.changeThemeContrast();
+                          },
+                          activeTrackColor: Colors.amber,
+                          activeColor: Colors.amber,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -109,32 +115,68 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
                         ),
                       ),
                       TextSizeSlider(),
+                      FlatButton(
+                        onPressed: (settings.fontSize != defaultFontSize)
+                            ? () {
+                                settings.fontSize = defaultFontSize;
+                              }
+                            : null,
+                        child: Text(
+                          "Retornar ao tamanho padrão",
+                          style: TextStyle(fontSize: 20.0),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
               SizedBox(height: 5),
               Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Row(
-                      children: [
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Sair',
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  ),
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Column(
+                          children: [
+                            Center(
+                              child: Text(
+                                'Trocar tema',
+                              ),
                             ),
-                          ),
-                          Spacer(),
-                          Container(child: Logout()),
-                        SizedBox(width: 10),
-                      ],
-                    ),
+                            SizedBox(height: 4),
+                            RadioButton(context),
+                            //Text('${MediaQuery.platformBrightnessOf(context)}'),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+              ),
+              SizedBox(height: 5),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Sair',
+                          style: TextStyle(
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                      Spacer(),
+                      Container(child: Logout()),
+                      SizedBox(width: 10),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ],
@@ -205,13 +247,55 @@ class TextSizeSlider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Slider(
       value: settings.fontSize,
-      min: 10,
-      max: 35,
-      divisions: 5,
-      label: "${settings.fontSize}",
+      min: 1,
+      max: 20,
+      divisions: 6,
+      label: "Tamanho",
       onChanged: (newSliderValue) {
         settings.fontSize = newSliderValue;
       },
     );
   }
+}
+
+/// Esta classe retorna um widget com slider referente ao tamanho da fonte.
+class RadioButton extends StatelessWidget {
+  final settings = GetIt.I<Settings>();
+  BuildContext contextTela;
+
+  RadioButton(this.contextTela);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Container(
+        alignment: Alignment.centerLeft,
+        child: Row(
+          children: <Widget>[
+            new Radio(
+              value: 1,
+              groupValue: settings.option,
+              onChanged: (value) => settings.handleRadioValueChange(value, contextTela),
+            ),
+            Text("Sistema"),
+            new Radio(
+              value: 2,
+              groupValue: settings.option,
+              onChanged:  (value) => settings.handleRadioValueChange(value, contextTela),
+            ),
+            Text("Light"),
+            new Radio(
+              value: 3,
+              groupValue: settings.option,
+              onChanged:  (value) => settings.handleRadioValueChange(value, contextTela),
+            ),
+            Text("Dark"),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+
 }

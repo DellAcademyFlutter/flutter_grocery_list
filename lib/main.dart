@@ -16,10 +16,8 @@ import 'local/shared_prefs.dart';
 
 void main() {
   GetIt.I.registerSingleton<Cart>(Cart()); // Um Singleton de [Cart].
-  GetIt.I
-      .registerSingleton<ThemeModel>(ThemeModel()); // Um singleton [ThemeModel]
-  GetIt.I.registerSingleton<Settings>(
-      Settings(GetIt.I<ThemeModel>())); // Um singleton [ThemeModel]
+  GetIt.I.registerSingleton<ThemeModel>(ThemeModel()); // Um singleton [ThemeModel]
+  GetIt.I.registerSingleton<Settings>(Settings(GetIt.I<ThemeModel>())); // Um singleton [ThemeModel]
   GetIt.I.registerSingleton<User>(User()); // Um singleton de User
   GetIt.I.registerSingleton<UserList>(UserList()); // Um singleton de User
   Stetho.initialize();
@@ -44,9 +42,7 @@ class MyApp extends StatelessWidget {
               builder: (context, w) {
                 return MaterialApp(
                   title: 'Flutter Demo',
-                  theme: settings.themeModel.isDarkTheme
-                      ? Themes.highContrastTheme()
-                      : Themes.defaultTheme(),
+                  theme: settings.themeModel.verifytheme(),
                   debugShowCheckedModeBanner: false,
                   home: loggedUser.name != null
                       ? MyHomePage(title: 'Carrinho')
