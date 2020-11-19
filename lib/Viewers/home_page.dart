@@ -28,6 +28,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final cart = GetIt.I<Cart>();
   final loggedUser = GetIt.I<User>();
+  dynamic args = Object();
 
   @override
   void initState() {
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Parametros passados
+    User args = ModalRoute.of(context).settings.arguments;
 
     return AnimatedBuilder(
         animation: cart,
@@ -59,7 +60,8 @@ class _HomePageState extends State<HomePage> {
                   children: <Widget>[
                     Column(
                       children: [
-                        Text("${widget.title}"),
+                        //Text("Compras de ${loggedUser?.name == null ? "nulo" : loggedUser.name}"),
+                        Text("Compras de ${args.name}"),
                       ],
                     ),
                   ],
