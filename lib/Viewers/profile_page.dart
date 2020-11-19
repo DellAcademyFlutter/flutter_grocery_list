@@ -192,7 +192,7 @@ class LightDarkThemeDropDownButtonState
               settings.themeDescription = "Tema com plano de fundo claro.";
               break;
           }
-          settings.themeModel.changeTheme(theme, context);
+          settings.themeModel.changeTheme(theme: theme, brightness: MediaQuery.platformBrightnessOf(context));
         });
       },
       items: values.map<DropdownMenuItem<String>>((String value) {

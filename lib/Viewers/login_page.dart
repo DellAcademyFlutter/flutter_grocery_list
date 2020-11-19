@@ -64,16 +64,16 @@ class _State extends State<LoginPage> {
                                 userName, jsonEncode(user.toJson()));
                           }
                         });
-                        Navigator.of(context).pushReplacementNamed(
-                            '/home',
-                            arguments: User(id: 7, name: 'José')
-                        );
-                        // Navigator.pushReplacement(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) =>
-                        //           MyHomePage(title: 'Compras')),
+                        // Navigator.of(context).pushReplacementNamed(
+                        //     '/home',
+                        //     arguments: User(id: 7, name: 'José')
                         // );
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  HomePage(title: 'Compras')),
+                        );
                       },
                     )),
               ],

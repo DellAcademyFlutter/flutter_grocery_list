@@ -37,6 +37,35 @@ class Cart extends ChangeNotifier {
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }
 
+  addItemNamed(
+      {int id,
+      String fqUserId,
+      String name,
+      String description,
+      double value,
+      int qtt,
+      bool isDone}) {
+    Item item = Item(
+      id: itemList.length + 1,
+      fqUserId: fqUserId,
+      name: name,
+      description: description,
+      value: value,
+      qtt: 1,
+      isDone: isDone,
+    );
+    itemList.add(item);
+    totalValue += item.value;
+    qttItems++;
+
+    // Salva o item em Local Storage
+    SharedPrefs.save(
+        "item_${item.fqUserId}_${item.id}", jsonEncode(item.toJson()));
+
+    notifyListeners(); // Notifica aos observadores uma mudanca na lista.
+  }
+
+
   /// Este metodo atualiza um item de [itemList].
   updateItem(int id, String fqUserId, String name, String description,
       double value, int qtt, bool isDone) {

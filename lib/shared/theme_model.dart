@@ -11,11 +11,11 @@ class ThemeModel extends ChangeNotifier {
   ThemeEnum _appTheme = ThemeEnum.lightTheme;
 
   // Metodos da classe
-  changeTheme(ThemeEnum theme, BuildContext context) {
+  changeTheme({ThemeEnum theme, Brightness brightness}) {
     if (theme == ThemeEnum.system) {
       // TODO: Implementar a captura do alto contraste pelo sistema.
       //(MediaQuery.of(context).highContrast == true)
-      (MediaQuery.platformBrightnessOf(context) == Brightness.light)
+      (brightness == Brightness.light)
           ? appTheme = ThemeEnum.lightTheme
           : appTheme = ThemeEnum.darkTheme;
       return;
