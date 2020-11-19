@@ -53,6 +53,7 @@ class Themes {
 
     return ThemeData(
       appBarTheme: AppBarTheme(
+        textTheme: TextTheme(
           subtitle2: TextStyle(
             color: Colors.black54,
           ),
@@ -60,7 +61,7 @@ class Themes {
             fontSize: (settings.fontSize - 5),
             color: Colors.black54,
           )),
-    );
+    ));
   }
 
   static darkTheme() {

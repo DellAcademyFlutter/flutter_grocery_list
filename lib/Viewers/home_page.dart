@@ -35,69 +35,60 @@ class _MyHomePageState extends State<MyHomePage> {
         animation: cart,
         builder: (context, w) {
           return DefaultTabController(
-            length: 3,
-            child: Scaffold(
-              appBar: AppBar(
-                bottom: TabBar(
-                  isScrollable: false,
-                  tabs: [
-                    Tab(icon: Icon(Icons.done_outline)),
-                    Tab(icon: Icon(Icons.done_all)),
-                    Tab(icon: Icon(Icons.person_outline)),
-                  ],
-                ),
-                title: Row(
-                  children: <Widget>[
-                    Column(
+              length: 3,
+              child: Scaffold(
+                appBar: AppBar(
+                  bottom: TabBar(
+                    isScrollable: false,
+                    tabs: [
+                      Tab(icon: Icon(Icons.done_outline)),
+                      Tab(icon: Icon(Icons.done_all)),
+                      Tab(icon: Icon(Icons.person_outline)),
+                    ],
+                  ),
+                  title: Row(
+                    children: <Widget>[
+                      Column(
+                        children: [
+                          //Text("Compras de ${loggedUser?.name == null ? "nulo" : loggedUser.name}"),
+                          Text("Compras de ${ModalRoute
+                              .of(context)
+                              .settings
+                              .arguments
+                              .toString()}"),
+                        ],
+                      ),
+                    ],
+                  ),
+                  backgroundColor: cart.hasSelectedItems()
+                      ? Colors.blue[900]
+                      : null,
+                  actions: <Widget>[
+                    cart.hasSelectedItems()
+                        ? Row(
                       children: [
-                        //Text("Compras de ${loggedUser?.name == null ? "nulo" : loggedUser.name}"),
-                        Text("Compras de ${ModalRoute.of(context).settings.arguments.toString()}"),
+                        CheckSelectedItems(),
+                        SizedBox(width: 20),
+                        RemoveSelectedItems(),
                       ],
+                    )
+                        : SizedBox.shrink(),
+                    SizedBox(
+                      width: 20,
                     ),
                   ],
                 ),
-                backgroundColor: cart.hasSelectedItems() ? Colors.blue[900] : null,
-                actions: <Widget>[
-                  cart.hasSelectedItems()
-                      ? Row(
-                    children: [
-                      CheckSelectedItems(),
-                      SizedBox(width: 20),
-                      RemoveSelectedItems(),
-                    ],
-                  )
-                      : SizedBox.shrink(),
-                  SizedBox(
-                    width: 20,
-                  ),
-                ],
-              ),
-              body: TabBarView(
-                children: <Widget>[
-                  Text(widget.title),
-                  ChangeTheme(),
-                  FutureBuilder(
-                    future: SharedPrefs.read("isDarkTheme"),
-                    initialData: "---",
-            ),
-          );
+                body: TabBarView(
+                    children: <Widget>[
+                      Text(widget.title),
+                      Text(widget.title),
+                      Text(widget.title),
+                    ]),
+              ));
         });
-}
+  }
 
-/// Este widget exibe uma label para o [ThemeModel]
+  /// Este widget exibe uma label para o [ThemeModel]
 // ignore: non_constant_identifier_names
-Widget ThemeLabel() {
-  return FutureBuilder(
-    future: SharedPrefs.read("isDarkTheme"),
-    initialData: "---",
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        return null; //Text("${snapshot.data}");
-      } else {
-        return null; //CircularProgressIndicator();
-      }
-    },
-  );
+
 }
-
-
