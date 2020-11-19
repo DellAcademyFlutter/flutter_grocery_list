@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Models/item.dart';
-import 'package:flutter_grocery_list/Viewers/add_item_page.dart';
+import 'package:flutter_grocery_list/Viewers/create_item_page.dart';
 import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'package:get_it/get_it.dart';
 
@@ -27,7 +27,6 @@ class ItemsPage extends StatelessWidget {
 
 /// Widget que retorna uma [ListView] dos items pendentes
 Widget buildItemCards(bool doneItems) {
-  final cart = GetIt.I<Cart>();
   return (doneItems) ? listDoneItems() : listUndoneItems();
 }
 
@@ -86,9 +85,7 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
                 padding: EdgeInsets.symmetric(horizontal: 8),
                 margin: EdgeInsets.symmetric(vertical: 4),
                 child: Card(
-                  color: cart.itemList[index].selected
-                      ? Colors.blue
-                      : null,
+                  color: cart.itemList[index].selected ? Colors.blue : null,
                   child: Container(
                     margin: EdgeInsets.all(0.0),
                     child: Padding(
@@ -167,11 +164,10 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
                 return resp;
               } else {
                 // Navega para a pagina de edicao
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        CreateEditItemPage(item: cart.itemList[index]),
-                  ),
+                Navigator.of(context).pushNamed(
+                  CreateEditItemPage.routeName,
+                  arguments:
+                      CreateEditItemPageArguments(item: cart.itemList[index]),
                 );
               }
             },
@@ -293,12 +289,9 @@ showAlertDialog(BuildContext context) {
 FloatingActionButton addItem(BuildContext context) {
   return FloatingActionButton(
     onPressed: () {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => CreateEditItemPage(
-            item: null,
-          ),
-        ),
+      Navigator.of(context).pushNamed(
+        CreateEditItemPage.routeName,
+        arguments: CreateEditItemPageArguments(item: null),
       );
     },
     tooltip: 'Add',

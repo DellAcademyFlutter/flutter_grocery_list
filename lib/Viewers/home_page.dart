@@ -9,16 +9,23 @@ import 'package:flutter_grocery_list/shared_preferences/load_items.dart';
 import 'package:flutter_grocery_list/shared_preferences/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+/// Esta classe define os argumentos da [HomePage].
+class HomePageArguments {
+  final String title;
+  HomePageArguments({this.title});
+}
 
+class HomePage extends StatefulWidget {
+  HomePage({Key key, this.title}) : super(key: key);
+
+  static const routeName = "/home";
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _HomePageState extends State<HomePage> {
   final cart = GetIt.I<Cart>();
   final loggedUser = GetIt.I<User>();
 
@@ -31,6 +38,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // Parametros passados
+
     return AnimatedBuilder(
         animation: cart,
         builder: (context, w) {
@@ -50,22 +59,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: <Widget>[
                     Column(
                       children: [
-                        //Text("Compras de ${loggedUser?.name == null ? "nulo" : loggedUser.name}"),
-                        Text("Compras de ${ModalRoute.of(context).settings.arguments.toString()}"),
+                        Text("${widget.title}"),
                       ],
                     ),
                   ],
                 ),
-                backgroundColor: cart.hasSelectedItems() ? Colors.blue[900] : null,
+                backgroundColor:
+                    cart.hasSelectedItems() ? Colors.blue[900] : null,
                 actions: <Widget>[
                   cart.hasSelectedItems()
                       ? Row(
-                    children: [
-                      CheckSelectedItems(),
-                      SizedBox(width: 20),
-                      RemoveSelectedItems(),
-                    ],
-                  )
+                          children: [
+                            CheckSelectedItems(),
+                            SizedBox(width: 20),
+                            RemoveSelectedItems(),
+                          ],
+                        )
                       : SizedBox.shrink(),
                   SizedBox(
                     width: 20,
@@ -100,5 +109,3 @@ Widget ThemeLabel() {
     },
   );
 }
-
-

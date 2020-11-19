@@ -38,7 +38,6 @@ class BuildProfilePage extends StatelessWidget {
           SizedBox(height: 20.0),
           CartQttItems(),
           CartTotalValue(),
-          HighContrastSettings(),
           LightDarkTheme(),
           TextSize(),
           Logout(),
@@ -80,22 +79,12 @@ class CartQttItems extends StatelessWidget {
         animation: cart,
         builder: (context, widget) {
           return Card(
-            child: Container(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Text(
-                      "Quantidade de produtos: ",
-                      textAlign: TextAlign.left,
-                    ),
-                    Spacer(),
-                    Text(
-                      "${cart.qttItems}",
-                      textAlign: TextAlign.right,
-                    ),
-                  ],
-                ),
+            child: ListTile(
+              title: Text(
+                "Quantidade de produtos: ",
+              ),
+              trailing: Text(
+                "${cart.qttItems}",
               ),
             ),
           );
@@ -113,22 +102,13 @@ class CartTotalValue extends StatelessWidget {
         animation: cart,
         builder: (context, widget) {
           return Card(
-            child: Container(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Text(
-                      "Valor total do carrinho: ",
-                      textAlign: TextAlign.left,
-                    ),
-                    Spacer(),
-                    Text(
-                      "R\$ ${cart.totalValue}",
-                      textAlign: TextAlign.right,
-                    ),
-                  ],
-                ),
+            child: ListTile(
+              title: Text(
+                "Valor total do carrinho: ",
+              ),
+              trailing: Text(
+                "R\$ ${cart.totalValue}",
+                textAlign: TextAlign.right,
               ),
             ),
           );
@@ -144,12 +124,14 @@ class LightDarkTheme extends StatefulWidget {
 
 /// Esta classe retorna um widget referente ao estado da configuracao de tema escuro ou claro.
 class LightDarkThemeState extends State<LightDarkTheme> {
+  final settings = GetIt.I<Settings>();
+
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         title: Text('Tema'),
-        subtitle: Text('Escolha o tema de sua preferência'),
+        subtitle: Text("${settings.themeDescription}"),
         trailing: LightDarkThemeDropDownButton(),
       ),
     );
@@ -168,7 +150,12 @@ class LightDarkThemeDropDownButton extends StatefulWidget {
 /// Esta classe retorna um widget de dropdown de menu escuro ou claro.
 class LightDarkThemeDropDownButtonState
     extends State<LightDarkThemeDropDownButton> {
-  List<String> values = ['Sistema', 'Claro', 'Escuro'];
+  List<String> values = [
+    'Sistema',
+    'Tema Claro',
+    'Tema Escuro',
+    'Alto contraste'
+  ];
   String dropdownValue = 'Sistema';
   final settings = GetIt.I<Settings>();
 
@@ -186,10 +173,24 @@ class LightDarkThemeDropDownButtonState
         setState(() {
           dropdownValue = newValue;
           ThemeEnum theme;
-          switch(newValue){
-            case 'Sistema': theme = ThemeEnum.system; break;
-            case 'Escuro': theme = ThemeEnum.darkTheme; break;
-            default: theme = ThemeEnum.lightTheme; break;
+          switch (newValue) {
+            case 'Sistema':
+              theme = ThemeEnum.system;
+              settings.themeDescription = "Tema definido pelo sistema.";
+              break;
+            case 'Tema Escuro':
+              theme = ThemeEnum.darkTheme;
+              settings.themeDescription = "Tema com plano de fundo escuro.";
+              break;
+            case 'Alto contraste':
+              theme = ThemeEnum.highContrast;
+              settings.themeDescription =
+                  "Tema com maior diferença de luz e cor entre objetos";
+              break;
+            default:
+              theme = ThemeEnum.lightTheme;
+              settings.themeDescription = "Tema com plano de fundo claro.";
+              break;
           }
           settings.themeModel.changeTheme(theme, context);
         });
@@ -201,57 +202,6 @@ class LightDarkThemeDropDownButtonState
         );
       }).toList(),
     );
-  }
-}
-
-/// Esta classe retorna um widget referente a configuracao do contraste das cores.
-class HighContrastSettings extends StatefulWidget {
-  @override
-  HighContrastSettingsState createState() => HighContrastSettingsState();
-}
-
-/// Esta classe retorna um widget referente ao estado da configuracao do contraste das cores.
-class HighContrastSettingsState extends State<HighContrastSettings> {
-  final settings = GetIt.I<Settings>();
-  bool isSwitched = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-        child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Text(
-                'Alto-contraste',
-                textAlign: TextAlign.center,
-              ),
-              Spacer(),
-              Switch(
-                value: isSwitched,
-                onChanged: (value) {
-                  setState(() {
-                    isSwitched = value;
-                    settings.themeModel.changeTheme(isSwitched? ThemeEnum.highContrast : ThemeEnum.lightTheme, context);
-                  });
-                },
-                activeTrackColor: Colors.blue,
-                activeColor: Colors.blue,
-              ),
-            ],
-          ),
-          Container(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              'Maior diferença de luminância/cor entre objetos (ajuda a distinguir melhor).',
-              style: Theme.of(context).textTheme.caption,
-            ),
-          ),
-        ],
-      ),
-    ));
   }
 }
 
@@ -307,10 +257,10 @@ class TextSizeSlider extends StatelessWidget {
           ),
           RaisedButton(
             child: Text('Tamanho padrão'),
-            onPressed: settings.fontSize == settings.defaultSize
+            onPressed: settings.fontSize == settings.defaultFontSize
                 ? null
                 : () {
-                    settings.fontSize = settings.defaultSize;
+                    settings.fontSize = settings.defaultFontSize;
                   },
           )
         ],
@@ -367,10 +317,7 @@ class LogoutButton extends StatelessWidget {
               loggedUser.name = null;
               SharedPrefs.remove("loggedUser");
               cart.clean(); // limpa o carrinho.
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
+              Navigator.pushReplacementNamed(context, '/');
             } else {
               Navigator.of(context).push(
                 MaterialPageRoute(

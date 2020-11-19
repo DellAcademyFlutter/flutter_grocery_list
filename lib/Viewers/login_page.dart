@@ -7,6 +7,8 @@ import 'package:get_it/get_it.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
+  static const routeName = "/";
+
   @override
   State<StatefulWidget> createState() => new _State();
 }
@@ -55,19 +57,19 @@ class _State extends State<LoginPage> {
                         loggedUser.name = userName;
                         SharedPrefs.save("loggedUser", userName);
                         SharedPrefs.contains(userName).then((value) {
-                          if (!value){
+                          if (!value) {
                             // TODO: ajeitar ID zero.
                             User user = User(id: 0, name: userName);
-                            SharedPrefs.save(userName, jsonEncode(user.toJson()));
+                            SharedPrefs.save(
+                                userName, jsonEncode(user.toJson()));
                           }
                         });
-                        Navigator.of(context).pushReplacementNamed('/home', arguments: "Israel");
-                        // Navigator.pushReplacement(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) =>
-                        //           MyHomePage(title: 'Compras')),
-                        // );
+
+                        Navigator.of(context).pushReplacementNamed(
+                          HomePage.routeName,
+                          arguments: HomePageArguments(
+                              title: "Compras de ${loggedUser.name}"),
+                        );
                       },
                     )),
               ],

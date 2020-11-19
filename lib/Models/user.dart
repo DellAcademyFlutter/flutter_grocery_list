@@ -1,13 +1,17 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/rendering.dart';
 
 /// Esta classe implementa o objeto [Model] de um item do mercado [User].
 class User extends ChangeNotifier {
   /// Construtor padrao da classe
-  User({this.id, this.name});
+  User({int id, String name}) {
+    this.id = id;
+    this._name = name;
+  }
 
   // Atributos da classe
   int id;
-  String name;
+  String _name;
 
   /// Atribui os valores dos parametros deste [User] dado um [Map] Jason.
   User.fromJson(Map<String, dynamic> json) {
@@ -23,11 +27,19 @@ class User extends ChangeNotifier {
     return data;
   }
 
+  // Gets e Set
+  String get name => _name;
+
+  set name(String value) {
+    _name = value;
+    notifyListeners();
+  }
+
   /// Disjuncao logica (Equals): compara se dois objetos [User] sao iguais.
   @override
-  bool operator == (Object other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
-          other is User && runtimeType == other.runtimeType && id == other.id;
+      other is User && runtimeType == other.runtimeType && id == other.id;
 
   /// hashCode: codigo para identificacao unica deste carrinho.
   @override

@@ -1,18 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 
-class Settings extends ChangeNotifier{
+class Settings extends ChangeNotifier {
   // Atributos da classe
   double _fontSize = 19.5;
-  double _defaultSize = 19.5;
-
+  double _defaultFontSize = 19.5;
+  String _themeDescription = "Tema definido pelo sistema.";
   final ThemeModel themeModel;
 
   // Construtor da classe
   Settings(this.themeModel);
 
   // Metodos da classe
-  increment(){
+  increment() {
     fontSize += 10.0;
     notifyListeners();
   }
@@ -25,9 +25,15 @@ class Settings extends ChangeNotifier{
     notifyListeners();
   }
 
-  double get defaultSize => _defaultSize;
+  double get defaultFontSize => _defaultFontSize;
 
-  set defaultSize(double value) {
-    _defaultSize = value;
+  set defaultFontSize(double value) {
+    _defaultFontSize = value;
+  }
+
+  String get themeDescription => _themeDescription;
+
+  set themeDescription(String value) {
+    _themeDescription = value;
   }
 }

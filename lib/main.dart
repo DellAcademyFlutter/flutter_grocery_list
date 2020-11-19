@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/settings.dart';
-import 'package:flutter_grocery_list/Viewers/add_item_page.dart';
+import 'package:flutter_grocery_list/Viewers/create_item_page.dart';
 import 'package:flutter_grocery_list/Viewers/home_page.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:flutter_grocery_list/shared_preferences/load_user.dart';
@@ -14,8 +14,10 @@ import 'Viewers/login_page.dart';
 
 void main() {
   GetIt.I.registerSingleton<Cart>(Cart()); // Um Singleton de [Cart].
-  GetIt.I.registerSingleton<ThemeModel>(ThemeModel()); // Um singleton [ThemeModel]
-  GetIt.I.registerSingleton<Settings>(Settings(GetIt.I<ThemeModel>())); // Um singleton [ThemeModel]
+  GetIt.I
+      .registerSingleton<ThemeModel>(ThemeModel()); // Um singleton [ThemeModel]
+  GetIt.I.registerSingleton<Settings>(
+      Settings(GetIt.I<ThemeModel>())); // Um singleton [ThemeModel]
   GetIt.I.registerSingleton<User>(User()); // Um singleton de User
   Stetho.initialize();
 
@@ -36,28 +38,54 @@ class MyApp extends StatelessWidget {
           return AnimatedBuilder(
               animation: settings,
               builder: (context, w) {
-              return MaterialApp(
-                title: 'Flutter Demo',
-                //home:  loggedUser.name != null ? MyHomePage(title: 'Compras') : LoginPage(),
-                theme: Themes.defaultTheme(),
-                darkTheme: Themes.darkTheme(),
-                // theme: ThemeData(
-                //   brightness: settings.themeModel.isDarkTheme ? Brightness.dark : Brightness.light
-                // ),
-                debugShowCheckedModeBanner: false,
-                builder: (context, child) {
-                  LoadUser.load(); // Carrega o usuario
-                  return child;
-                },
-                initialRoute: loggedUser.name != null ? '/home' : '/',
-                routes: {
-                  '/' : (context) => LoginPage(),
-                  '/home' : (context) => MyHomePage(title: 'Compras'),
-                  '/createItem' : (context) => CreateEditItemPage()
-                },
-              );
-            }
-          );
+                return MaterialApp(
+                    title: 'Flutter Demo',
+                    theme: Themes.getAppTheme(),
+                    darkTheme: Themes.darkTheme(),
+                    debugShowCheckedModeBanner: false,
+                    routes: {
+                      // Rotas sem argumentos
+                      LoginPage.routeName: (context) => LoginPage(),
+                    },
+                    builder: (context, child) {
+                      LoadUser.load(); // Carrega o usuario
+                      return child;
+                    },
+                    onGenerateRoute: (settings) {
+                      // Rotas com argumentos.
+                      // Capturar e extrair os argumentos da pagina.
+                      switch (settings.name) {
+                        case HomePage.routeName:
+                          {
+                            final HomePageArguments args = settings.arguments;
+                            return MaterialPageRoute(
+                              builder: (context) {
+                                return HomePage(
+                                  title: args.title,
+                                );
+                              },
+                            );
+                          }
+                          break;
+                        case CreateEditItemPage.routeName:
+                          {
+                            final CreateEditItemPageArguments args =
+                                settings.arguments;
+                            return MaterialPageRoute(
+                              builder: (context) {
+                                return CreateEditItemPage(
+                                  item: args.item,
+                                );
+                              },
+                            );
+                          }
+                          break;
+                        default: // Caso precise implementar
+                          assert(false, 'Need to implement ${settings.name}');
+                          return null;
+                      }
+                    });
+              });
         });
   }
 }
