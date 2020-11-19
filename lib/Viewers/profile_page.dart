@@ -3,12 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Models/settings.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
-import 'package:flutter_grocery_list/Models/userList.dart';
 import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:flutter_grocery_list/local/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
-import 'login_page.dart';
 
 /// Esta classe implementa a pagina de perfil de [User].
 class ProfilePage extends StatelessWidget {
@@ -91,8 +89,8 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
                         child: Switch(
                           value: isSwitched,
                           onChanged: (value) {
-                              isSwitched = value;
-                              settings.themeModel.changeThemeContrast();
+                            isSwitched = value;
+                            settings.themeModel.changeThemeContrast();
                           },
                           activeTrackColor: Colors.amber,
                           activeColor: Colors.amber,
@@ -172,7 +170,7 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
                       ),
                       Spacer(),
                       Container(child: Logout()),
-                      SizedBox(width: 10),
+                      SizedBox(width: 2),
                     ],
                   ),
                 ),
@@ -201,36 +199,32 @@ class CartInformations extends StatelessWidget {
   }
 }
 
-/// Esta classe retorna um widget de logout de [User]
-class Logout extends StatelessWidget {
+logoutMethod(BuildContext context) {
   final loggedUser = GetIt.I<User>();
   final cart = GetIt.I<Cart>();
-  final userList = GetIt.I<UserList>();
 
+  SharedPrefs.contains("loggedUser").then((value) {
+    if (value) {
+      cart.exportItemToLocalStorage(loggedUser.name);
+      saveUser(loggedUser);
+      SharedPrefs.remove("loggedUser");
+      loggedUser.name = null;
+      cart.removeAll();
+
+      Navigator.pushReplacementNamed(context, '/');
+    } else {
+      Navigator.pushReplacementNamed(context, '/');
+    }
+  });
+}
+
+/// Esta classe retorna um widget de logout de [User]
+class Logout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () {
-          SharedPrefs.contains("loggedUser").then((value) {
-            if (value) {
-              cart.exportItemToLocalStorage(loggedUser.name);
-              userList.addUser(loggedUser);
-              loggedUser.name = null;
-              SharedPrefs.remove("loggedUser");
-
-              cart.removeAll();
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => LoginPage()),
-              );
-            } else {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => LoginPage(),
-                ),
-              );
-            }
-          });
+          logoutMethod(context);
         },
         child: Icon(
           Icons.power_settings_new,
@@ -258,6 +252,10 @@ class TextSizeSlider extends StatelessWidget {
   }
 }
 
+saveUser(User user) {
+  SharedPrefs.save("${user.name}", '${user.name}');
+}
+
 /// Esta classe retorna um widget com slider referente ao tamanho da fonte.
 class RadioButton extends StatelessWidget {
   final settings = GetIt.I<Settings>();
@@ -272,22 +270,25 @@ class RadioButton extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: Row(
           children: <Widget>[
-            new Radio(
+            Radio(
               value: 1,
               groupValue: settings.option,
-              onChanged: (value) => settings.handleRadioValueChange(value, contextTela),
+              onChanged: (value) =>
+                  settings.handleRadioValueChange(value, contextTela),
             ),
             Text("Sistema"),
-            new Radio(
+            Radio(
               value: 2,
               groupValue: settings.option,
-              onChanged:  (value) => settings.handleRadioValueChange(value, contextTela),
+              onChanged: (value) =>
+                  settings.handleRadioValueChange(value, contextTela),
             ),
             Text("Light"),
             new Radio(
               value: 3,
               groupValue: settings.option,
-              onChanged:  (value) => settings.handleRadioValueChange(value, contextTela),
+              onChanged: (value) =>
+                  settings.handleRadioValueChange(value, contextTela),
             ),
             Text("Dark"),
           ],
@@ -295,7 +296,4 @@ class RadioButton extends StatelessWidget {
       ),
     );
   }
-
-
-
 }

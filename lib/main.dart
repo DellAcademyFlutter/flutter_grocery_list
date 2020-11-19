@@ -1,33 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
-import 'package:flutter_grocery_list/Models/userList.dart';
-import 'package:flutter_grocery_list/Viewers/home_page.dart';
-import 'package:flutter_grocery_list/Viewers/login_page.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:get_it/get_it.dart';
 import 'Models/cart.dart';
 import 'Models/settings.dart';
+import 'Viewers/add_item_page.dart';
+import 'Viewers/home_page.dart';
+import 'Viewers/login_page.dart';
 import 'local/shared_prefs.dart';
-
-// Versao: Antonio Honorato Moreira Guedes
-// Equipe: Antonio Honorato (Mentorado) / Elias Cicero (Mentorado)  / Israel Barbosa (Mentor)
-// Projeto - Groccery_List my Cart
+import 'shared/theme_model.dart';
 
 void main() {
-  GetIt.I.registerSingleton<Cart>(Cart()); // Um Singleton de [Cart].
-  GetIt.I.registerSingleton<ThemeModel>(ThemeModel()); // Um singleton [ThemeModel]
-  GetIt.I.registerSingleton<Settings>(Settings(GetIt.I<ThemeModel>())); // Um singleton [ThemeModel]
-  GetIt.I.registerSingleton<User>(User()); // Um singleton de User
-  GetIt.I.registerSingleton<UserList>(UserList()); // Um singleton de User
+  //Singletons
+  GetIt.I.registerSingleton<Cart>(Cart());
+  GetIt.I.registerSingleton<ThemeModel>(ThemeModel());
+  GetIt.I.registerSingleton<Settings>(Settings(GetIt.I<ThemeModel>()));
+  GetIt.I.registerSingleton<User>(User());
+
+  //Inicializando Stetho
   Stetho.initialize();
 
-  // Execucao do aplicativo
+  //Execucao do app
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final themeModel = GetIt.I<ThemeModel>();
   final settings = GetIt.I<Settings>();
   final loggedUser = GetIt.I<User>();
   final cartList = GetIt.I<Cart>();
@@ -35,39 +33,56 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-        animation: settings.themeModel,
+        animation: loggedUser,
         builder: (context, w) {
           return AnimatedBuilder(
-              animation: settings,
+              animation: settings.themeModel,
               builder: (context, w) {
                 return MaterialApp(
-                  title: 'Flutter Demo',
-                  theme: settings.themeModel.verifytheme(),
-                  debugShowCheckedModeBanner: false,
-                  home: loggedUser.name != null
-                      ? MyHomePage(title: 'Carrinho')
-                      : LoginPage(),
-                  builder: (context, child) {
-
-                    //SharedPrefs.read("isDarkTheme").then((value) {
-                    //  themeModel.isDarkTheme = (value == "true");
-                    //});
-
-                    SharedPrefs.contains("loggedUser").then((value) {
-                      if (value) {
-                        SharedPrefs.read("loggedUser").then((value) {
-                          loggedUser.name = value;
-                        });
-                      } else {
-                        loggedUser.name = null;
+                    title: 'Flutter Demo',
+                    theme: settings.themeModel.verifytheme('defaultTheme'),
+                    darkTheme: settings.themeModel.verifytheme('isDarkTheme'),
+                    debugShowCheckedModeBanner: false,
+                    builder: (context, child) {
+                      SharedPrefs.contains("loggedUser").then((value) {
+                        if (value) {
+                          SharedPrefs.read("loggedUser").then((value) {
+                            loggedUser.name = value;
+                          });
+                        } else {
+                          loggedUser.name = null;
+                        }
+                      });
+                      return child;
+                    },
+                    initialRoute: '/',
+                    routes: {
+                      LoginPage.routeName: (context) =>
+                          loggedUser.name != null ? MyHomePage() : LoginPage(),
+                      MyHomePage.routeName: (context) => MyHomePage(),
+                    },
+                    onGenerateRoute: (settings) {
+                      // Rotas com argumentos.
+                      // Capturar e extrair os argumentos da pagina.
+                      switch (settings.name) {
+                        case CreateEditItemPage.routeName:
+                          {
+                            final CreateEditItemPageArguments args = settings.arguments;
+                            return MaterialPageRoute(
+                              builder: (context) {
+                                return CreateEditItemPage(
+                                  item: args.item,
+                                );
+                              },
+                            );
+                          }
+                          break;
+                        default:
+                          assert(false, 'Need to implement ${settings.name}');
+                          return null;
                       }
                     });
-                    return child;
-                  },
-                );
               });
         });
   }
 }
-
-

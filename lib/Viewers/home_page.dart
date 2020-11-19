@@ -10,11 +10,9 @@ import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:flutter_grocery_list/local/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
 
-
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+  MyHomePage({Key key}) : super(key: key);
+  static const routeName = "/home";
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -31,58 +29,58 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-        animation: cart,
-        builder: (context, w) {
-          return DefaultTabController(
-            length: 3,
-            child: Scaffold(
-              appBar: AppBar(
-                bottom: TabBar(
-                  isScrollable: false,
-                  tabs: [
-                    Tab(icon: Icon(Icons.remove_shopping_cart)),
-                    Tab(icon: Icon(Icons.add_shopping_cart)),
-                    Tab(icon: Icon(Icons.account_circle)),
-                  ],
-                ),
-                title: Row(
-                  children: <Widget>[
-                    Column(
+      return AnimatedBuilder(
+          animation: cart,
+          builder: (context, w) {
+            return DefaultTabController(
+              length: 3,
+              child: Scaffold(
+                appBar: AppBar(
+                  bottom: TabBar(
+                    isScrollable: false,
+                    tabs: [
+                      Tab(icon: Icon(Icons.remove_shopping_cart)),
+                      Tab(icon: Icon(Icons.add_shopping_cart)),
+                      Tab(icon: Icon(Icons.account_circle)),
+                    ],
+                  ),
+                  title: Row(
+                    children: <Widget>[
+                      Column(
+                        children: [
+                          Text("Carrinho de: ${loggedUser.name}",
+                            style: TextStyle(color: Colors.black),),
+                        ],
+                      ),
+                    ],
+                  ),
+                  backgroundColor:
+                  cart.hasSelectedItems() ? Colors.green : Colors.amber,
+                  actions: <Widget>[
+                    cart.hasSelectedItems()
+                        ? Row(
                       children: [
-                        Text("Carrinho de: ${loggedUser?.name == null ? "Nenhum perfil disponível" : loggedUser.name}",
-                          style: TextStyle(color: Colors.black),),
+                        CheckSelectedItems(),
+                        SizedBox(width: 20),
+                        RemoveSelectedItems(),
                       ],
+                    )
+                        : SizedBox.shrink(),
+                    SizedBox(
+                      width: 20,
                     ),
                   ],
                 ),
-                backgroundColor:
-                cart.hasSelectedItems() ? Colors.green : Colors.amber,
-                actions: <Widget>[
-                  cart.hasSelectedItems()
-                      ? Row(
-                    children: [
-                      CheckSelectedItems(),
-                      SizedBox(width: 20),
-                      RemoveSelectedItems(),
-                    ],
-                  )
-                      : SizedBox.shrink(),
-                  SizedBox(
-                    width: 20,
-                  ),
-                ],
+                body: TabBarView(
+                  children: <Widget>[
+                    ItemsPage(doneItems: false),
+                    ItemsPage(doneItems: true),
+                    ProfilePage(),
+                  ],
+                ),
               ),
-              body: TabBarView(
-                children: <Widget>[
-                  ItemsPage(doneItems: false),
-                  ItemsPage(doneItems: true),
-                  ProfilePage(),
-                ],
-              ),
-            ),
-          );
-        });
+            );
+          });
   }
 }
 

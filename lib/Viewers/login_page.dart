@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Models/item.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
-import 'package:flutter_grocery_list/Models/userList.dart';
 import 'package:flutter_grocery_list/local/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
+  static const routeName = "/";
+
   @override
   State<StatefulWidget> createState() => new _State();
 }
@@ -18,7 +19,6 @@ class LoginPage extends StatefulWidget {
 class _State extends State<LoginPage> {
   TextEditingController nameController = TextEditingController();
   final loggedUser = GetIt.I<User>();
-  final userList = GetIt.I<UserList>();
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +51,7 @@ class _State extends State<LoginPage> {
                     ),
                   ),
                 ),
+                SizedBox(height: 5),
                 Container(
                     height: 50,
                     padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -59,14 +60,11 @@ class _State extends State<LoginPage> {
                       color: Colors.amber,
                       child: Text('Login'),
                       onPressed: () {
+                        loggedUser.name = nameController.text;
                         SharedPrefs.save("loggedUser", nameController.text);
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  MyHomePage(title: 'Carrinho')),
-                        );
                         importItemToLocalStorage(nameController.text);
+                        Navigator.of(context)
+                            .pushReplacementNamed(MyHomePage.routeName);
                       },
                     )),
               ],
@@ -85,6 +83,28 @@ class _State extends State<LoginPage> {
         key = value.elementAt(i);
 
         if (key.contains(userName)) {
+          SharedPrefs.read(key).then((value) {
+            Item item = Item.fromJson(jsonDecode(value));
+            cartlist.addItem(item.id, item.user, item.name, item.value,
+                item.amount, item.isDone);
+          });
+        }
+      }
+    });
+  }
+
+  /// Verifica se o usuário já possui algum carrinho salvo
+  removeAllUsers(String userName) async {
+    // Ler todas as keys em Local Storage.
+    SharedPrefs.getKeysCollection().then((value) {
+      final cartlist = GetIt.I<Cart>();
+
+      String key;
+
+      for (int i = 0; i < value.length; i++) {
+        key = value.elementAt(i);
+
+        if (!key.contains('item')) {
           SharedPrefs.read(key).then((value) {
             Item item = Item.fromJson(jsonDecode(value));
             cartlist.addItem(item.id, item.user, item.name, item.value,

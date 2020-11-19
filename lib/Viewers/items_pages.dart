@@ -176,11 +176,10 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
                 return resp;
               } else {
                 // Navega para a pagina de edicao
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        CreateEditItemPage(item: cart.cartList[index]),
-                  ),
+                Navigator.of(context).pushNamed(
+                  CreateEditItemPage.routeName,
+                  arguments:
+                  CreateEditItemPageArguments(item: cart.cartList[index]),
                 );
               }
             },
@@ -310,12 +309,9 @@ showAlertDialog(BuildContext context) {
 FloatingActionButton addItem(BuildContext context) {
   return FloatingActionButton(
     onPressed: () {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => CreateEditItemPage(
-            item: null,
-          ),
-        ),
+      Navigator.of(context).pushNamed(
+        CreateEditItemPage.routeName,
+        arguments: CreateEditItemPageArguments(item: null),
       );
     },
     tooltip: 'Add',

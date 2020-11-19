@@ -22,22 +22,22 @@ class ThemeModel extends ChangeNotifier{
     notifyListeners();
   }
 
-  verifytheme(){
-    if(isContrast == true){
+  verifytheme(String theme){
+    if(isContrast == true || theme == 'highontrast'){
       return Themes.highContrastTheme();
     }
 
-    if(isDarkTheme == true){
+    if(isDarkTheme == true|| theme == 'isDarkTheme'){
       isContrast = false;
       return Themes.darkTheme();
     }
 
-    if(isDarkTheme == false){
+    if(isDarkTheme == false|| theme == 'defaultTheme'){
       isContrast = false;
       return Themes.defaultTheme();
     }
 
-
+    notifyListeners();
   }
 
   changeTheme(){

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_grocery_list/local/shared_prefs.dart';
-import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'item.dart';
 
 /// Esta classe implementa o objeto [Model] de um carrinho [Cart].
@@ -45,8 +44,8 @@ class Cart extends ChangeNotifier {
   }
 
   /// Este metodo atualiza um item de [cartList].
-  updateItem(int id, String user, String name, double value, int qtt) {
-    final item = Item(id: id, user: user, name: name, value: value, amount: qtt);
+  updateItem(int id, String user, String name, double value, int qtt, bool isDone) {
+    final item = Item(id: id, user: user, name: name, value: value, amount: qtt, isDone: isDone);
 
     final index = cartList.indexOf(item);
     // Atualiza o preco total do carrinho

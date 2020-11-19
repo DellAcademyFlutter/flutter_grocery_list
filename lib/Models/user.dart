@@ -18,7 +18,6 @@ class User extends ChangeNotifier {
   // Metodos da classe
   //****************************************************************************
 
-
   /// Disjuncao logica (Equals): compara se dois objetos [User] sao iguais.
   @override
   bool operator == (Object other) =>

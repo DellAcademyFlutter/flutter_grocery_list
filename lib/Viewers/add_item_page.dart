@@ -5,10 +5,17 @@ import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:get_it/get_it.dart';
 import '../Models/item.dart';
 
+/// Esta classe define os argumentos da [CreateEditItemPage].
+class CreateEditItemPageArguments {
+  final Item item;
+  CreateEditItemPageArguments({this.item});
+}
+
 /// Esta classe implementa uma tela de adicao/edicao de [Item].
 class CreateEditItemPage extends StatefulWidget {
   CreateEditItemPage({this.item});
 
+  static const routeName = "/createitem";
   final cart = GetIt.I<Cart>();
   final Item item;
 
@@ -102,24 +109,30 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
                       ]))),
               SizedBox(height: 12),
               RaisedButton(
-                onPressed:(itemName != '')
+                onPressed: (itemName != '')
                     ? () {
-                  if (isEdit) {
-                    // Realiza a edicao do item
-                    if ((itemName != widget.item.name || itemValue != widget.item.value))
-                      widget.cart.updateItem(widget.item.id, loggedUser.name,
-                          itemName, itemValue, widget.item.amount);
-                  } else {
-                    if (itemName != ''){
-                      // Realiza a adicao do item
-                      widget.cart.addItem(widget.cart.cartList.length + 1,
-                          loggedUser.name, itemName, itemValue, 1, false);
-                    } else{
-                      return null;
-                    }
-                  }
-                  Navigator.of(context).pop();
-                }
+                        if (isEdit) {
+                          // Realiza a edicao do item
+                          if ((itemName != widget.item.name ||
+                              itemValue != widget.item.value))
+                            widget.cart.updateItem(
+                                widget.item.id,
+                                loggedUser.name,
+                                itemName,
+                                itemValue,
+                                widget.item.amount,
+                            widget.item.isDone);
+                        } else {
+                          if (itemName != '') {
+                            // Realiza a adicao do item
+                            widget.cart.addItem(widget.cart.cartList.length + 1,
+                                loggedUser.name, itemName, itemValue, 1, false);
+                          } else {
+                            return null;
+                          }
+                        }
+                        Navigator.of(context).pop();
+                      }
                     : null,
                 child: Text(
                   textHint,
