@@ -9,14 +9,8 @@ import 'package:flutter_grocery_list/shared_preferences/load_items.dart';
 import 'package:flutter_grocery_list/shared_preferences/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
 
-/// Esta classe define os argumentos da [HomePage].
-class HomePageArguments {
-  final String title;
-  HomePageArguments({this.title});
-}
-
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.title}) : super(key: key);
+  HomePage({Key key, this.title = ""}) : super(key: key);
 
   static const routeName = "/home";
   final String title;
@@ -59,7 +53,7 @@ class _HomePageState extends State<HomePage> {
                   children: <Widget>[
                     Column(
                       children: [
-                        Text("${widget.title}"),
+                        Text("Compras de ${loggedUser.name}"),
                       ],
                     ),
                   ],

@@ -67,8 +67,6 @@ class _State extends State<LoginPage> {
 
                         Navigator.of(context).pushReplacementNamed(
                           HomePage.routeName,
-                          arguments: HomePageArguments(
-                              title: "Compras de ${loggedUser.name}"),
                         );
                       },
                     )),

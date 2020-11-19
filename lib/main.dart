@@ -43,9 +43,13 @@ class MyApp extends StatelessWidget {
                     theme: Themes.getAppTheme(),
                     darkTheme: Themes.darkTheme(),
                     debugShowCheckedModeBanner: false,
+                    initialRoute: loggedUser != null
+                        ? HomePage.routeName
+                        : LoginPage.routeName,
                     routes: {
                       // Rotas sem argumentos
                       LoginPage.routeName: (context) => LoginPage(),
+                      HomePage.routeName: (context) => HomePage(),
                     },
                     builder: (context, child) {
                       LoadUser.load(); // Carrega o usuario
@@ -55,18 +59,6 @@ class MyApp extends StatelessWidget {
                       // Rotas com argumentos.
                       // Capturar e extrair os argumentos da pagina.
                       switch (settings.name) {
-                        case HomePage.routeName:
-                          {
-                            final HomePageArguments args = settings.arguments;
-                            return MaterialPageRoute(
-                              builder: (context) {
-                                return HomePage(
-                                  title: args.title,
-                                );
-                              },
-                            );
-                          }
-                          break;
                         case CreateEditItemPage.routeName:
                           {
                             final CreateEditItemPageArguments args =
