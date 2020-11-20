@@ -62,7 +62,7 @@ class _State extends State<LoginPage> {
                       onPressed: () {
                         loggedUser.name = nameController.text;
                         SharedPrefs.save("loggedUser", nameController.text);
-                        importItemToLocalStorage(nameController.text);
+                        //importItemToLocalStorage(nameController.text);
                         Navigator.of(context)
                             .pushReplacementNamed(MyHomePage.routeName);
                       },

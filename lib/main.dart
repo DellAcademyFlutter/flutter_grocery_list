@@ -55,15 +55,13 @@ class MyApp extends StatelessWidget {
                       });
                       return child;
                     },
-                    initialRoute: '/',
+                    initialRoute: loggedUser.name != null ? MyHomePage.routeName: LoginPage.routeName,
                     routes: {
                       LoginPage.routeName: (context) =>
                           loggedUser.name != null ? MyHomePage() : LoginPage(),
                       MyHomePage.routeName: (context) => MyHomePage(),
                     },
                     onGenerateRoute: (settings) {
-                      // Rotas com argumentos.
-                      // Capturar e extrair os argumentos da pagina.
                       switch (settings.name) {
                         case CreateEditItemPage.routeName:
                           {

@@ -1,30 +1,31 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
+import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:flutter_grocery_list/main.dart';
-
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  group('teste de carrinho', () {
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+   /// Teste para verificacao do preço total do carrinho
+   test('Teste de soma do preço total do carrinho', () {
+     Cart carrinho = Cart(id: 0);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
-  });
+     carrinho.addItem(0, 'Usuario 1', 'Brownie', 2.50, 1, false);
+     carrinho.addItem(0, 'Usuario 1', 'Chocolate', 0.50, 1, false);
+
+     expect(carrinho.totalValueCart, 3.0);
+   });
+
+   /// Teste para verificacao do item comprado
+   test('Teste para verificacao do item comprado', () {
+     Cart carrinho = Cart(id: 0);
+
+     carrinho.addItem(0, 'Usuario 1', 'Carne', 15.0, 1, true);
+     carrinho.addItem(0, 'Usuario 1', 'Frango', 13.50, 1, false);
+
+     expect(carrinho.cartList[0].isDone, true);
+   });
+ });
+
 }
+
+

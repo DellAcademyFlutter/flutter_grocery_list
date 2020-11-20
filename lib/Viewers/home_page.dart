@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
+import 'package:flutter_grocery_list/Models/item.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:flutter_grocery_list/Viewers/items_pages.dart';
 import 'package:flutter_grocery_list/Viewers/profile_page.dart';
@@ -24,6 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    importItemToLocalStorage(loggedUser.name);
     super.initState();
   }
 
@@ -82,6 +84,28 @@ class _MyHomePageState extends State<MyHomePage> {
             );
           });
   }
+}
+
+/// Verifica se o usuário já possui algum carrinho salvo
+importItemToLocalStorage(String userName) async {
+  // Ler todas as keys em Local Storage.
+  SharedPrefs.getKeysCollection().then((value) {
+    final cartlist = GetIt.I<Cart>();
+
+    String key;
+
+    for (int i = 0; i < value.length; i++) {
+      key = value.elementAt(i);
+
+      if (key.contains(userName)) {
+        SharedPrefs.read(key).then((value) {
+          Item item = Item.fromJson(jsonDecode(value));
+          cartlist.addItem(item.id, item.user, item.name, item.value,
+              item.amount, item.isDone);
+        });
+      }
+    }
+  });
 }
 
 /// Este widget exibe uma label para o [ThemeModel]

@@ -6,23 +6,14 @@ import 'item.dart';
 
 /// Esta classe implementa o objeto [Model] de um carrinho [Cart].
 class Cart extends ChangeNotifier {
-  //****************************************************************************
-  // Construtor da classe
-  //****************************************************************************
   /// Construtor padrao da classe
   Cart({this.id});
 
-  //****************************************************************************
-  // Atributos da classe
-  //****************************************************************************
   int id;
   int amountItems = 0;
   double totalValueCart = 0.0;
   List<Item> cartList = List();
 
-  //****************************************************************************
-  // Metodos da classe
-  //****************************************************************************
   /// Este metodo adiciona um item de [cartList].
   addItem(int id, String userName, String name, double value, int qtt, bool isDone) {
     Item item =
