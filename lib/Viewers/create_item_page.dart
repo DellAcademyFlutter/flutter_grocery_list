@@ -130,24 +130,24 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
                               itemDescription != widget.item.description ||
                               itemValue != widget.item.value))
                             widget.cart.updateItem(
-                                widget.item.id,
-                                widget.loggedUser.name,
-                                itemName,
-                                itemDescription,
-                                itemValue,
-                                widget.item.qtt,
-                                widget.item.isDone);
+                                id: widget.item.id,
+                                fqUserId: widget.loggedUser.name,
+                                name: itemName,
+                                description: itemDescription,
+                                value: itemValue,
+                                qtt: widget.item.qtt,
+                                isDone: widget.item.isDone);
                         } else {
                           if (itemName != '' || itemDescription != '') {
                             // Realiza a adicao do item
                             widget.cart.addItem(
-                                widget.cart.itemList.length + 1,
-                                widget.loggedUser.name,
-                                itemName,
-                                itemDescription,
-                                itemValue,
-                                1,
-                                false);
+                                id: widget.cart.itemList.length + 1,
+                                fqUserId: widget.loggedUser.name,
+                                name: itemName,
+                                description: itemDescription,
+                                value: itemValue,
+                                qtt: 1,
+                                isDone: false);
                           } else {
                             return null;
                           }

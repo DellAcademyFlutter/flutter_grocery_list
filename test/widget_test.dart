@@ -6,25 +6,37 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_grocery_list/Models/cart.dart';
+import 'package:flutter_grocery_list/Models/item.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_grocery_list/main.dart';
+import 'package:get_it/get_it.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+  /// Teste para verificacao do preço total do carrinho
+  test('Teste do preço total do carrinho', () {
+    Cart cart = Cart(id: 0);
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    cart.addItem(id: 0, fqUserId: 'anonimo', name:'item 1', description:'item 1', value:2.0, qtt:2, isDone: false);
+    cart.addItem(id: 1, fqUserId: 'anonimo', name:'item 2', description:'item 2', value:3.0, qtt:2, isDone: false);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    expect(cart.totalValue, 10.0);
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  /// Teste para verificacao do item comprado
+  test('Teste para verificacao do item comprado', () {
+    Cart cart = Cart(id: 0);
+
+    cart.addItem(id: 0, fqUserId: 'anonimo', name:'item 1', description:'item 1', value:2.0, qtt:2, isDone: false);
+    cart.addItem(id: 1, fqUserId: 'anonimo', name:'item 2', description:'item 2', value:3.0, qtt:2, isDone: false);
+    cart.checkItem(0);
+
+    expect(cart.itemList[0].isDone, true);
+  });
+
+  /// Teste para verificacao do login de usuario
+  test('Teste para verificacao do login de usuario', () {
+    
   });
 }

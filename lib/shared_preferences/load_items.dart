@@ -26,8 +26,8 @@ class LoadItems {
           SharedPrefs.read(key).then((value) {
             Item item = Item.fromJson(jsonDecode(value));
             if (item.fqUserId == loggedUserId) {
-              cart.addItem(item.id, item.fqUserId, item.name, item.description,
-                  item.value, item.qtt, item.isDone);
+              cart.addItem(id: item.id, fqUserId: item.fqUserId, name: item.name, description: item.description,
+                  value: item.value, qtt: item.qtt, isDone: item.isDone);
             }
           });
         }

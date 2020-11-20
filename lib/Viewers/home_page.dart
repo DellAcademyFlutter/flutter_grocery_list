@@ -33,8 +33,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    User args = ModalRoute.of(context).settings.arguments;
-
     return AnimatedBuilder(
         animation: cart,
         builder: (context, w) {
@@ -54,8 +52,7 @@ class _HomePageState extends State<HomePage> {
                   children: <Widget>[
                     Column(
                       children: [
-                        //Text("Compras de ${loggedUser?.name == null ? "nulo" : loggedUser.name}"),
-                        Text("Compras de ${args.name}"),
+                        Text("Compras de ${loggedUser.name}"),
                       ],
                     ),
                   ],

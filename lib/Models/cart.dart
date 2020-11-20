@@ -15,19 +15,19 @@ class Cart extends ChangeNotifier {
   List<Item> itemList = List();
 
   /// Este metodo adiciona um item de [itemList].
-  addItem(int id, String fqUserId, String name, String description,
-      double value, int qtt, bool isDone) {
+  addItem({int id, String fqUserId, String name, String description,
+      double value, int qtt, bool isDone}) {
     Item item = Item(
       id: itemList.length + 1,
       fqUserId: fqUserId,
       name: name,
       description: description,
       value: value,
-      qtt: 1,
+      qtt: qtt,
       isDone: isDone,
     );
     itemList.add(item);
-    totalValue += item.value;
+    totalValue += (item.value*qtt);
     qttItems++;
 
     // Salva o item em Local Storage
@@ -38,8 +38,8 @@ class Cart extends ChangeNotifier {
   }
 
   /// Este metodo atualiza um item de [itemList].
-  updateItem(int id, String fqUserId, String name, String description,
-      double value, int qtt, bool isDone) {
+  updateItem({int id, String fqUserId, String name, String description,
+      double value, int qtt, bool isDone}) {
     final item = Item(
       id: id,
       fqUserId: fqUserId,
@@ -80,6 +80,18 @@ class Cart extends ChangeNotifier {
 
     // Remove o item
     itemList.removeAt(index);
+
+    notifyListeners(); // Notifica aos observadores uma mudanca na lista.
+  }
+
+  /// Este metodo marca concluido em um item
+  checkItem(int index){
+    Item item = itemList[index];
+    item.isDone = true;
+
+    // Salva o item em Local Storage
+    SharedPrefs.save("item_${item.fqUserId}_${item.id}",
+        jsonEncode(item.toJson()));
 
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }

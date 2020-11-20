@@ -192,7 +192,7 @@ class LightDarkThemeDropDownButtonState
               settings.themeDescription = "Tema com plano de fundo claro.";
               break;
           }
-          settings.themeModel.changeTheme(theme, context);
+          settings.themeModel.changeTheme(theme: theme, context: context);
         });
       },
       items: values.map<DropdownMenuItem<String>>((String value) {
@@ -319,11 +319,7 @@ class LogoutButton extends StatelessWidget {
               cart.clean(); // limpa o carrinho.
               Navigator.pushReplacementNamed(context, '/');
             } else {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => LoginPage(),
-                ),
-              );
+              Navigator.pushReplacementNamed(context, LoginPage.routeName);
             }
           });
         },

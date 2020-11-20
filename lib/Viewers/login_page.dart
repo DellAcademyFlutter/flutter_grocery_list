@@ -65,15 +65,8 @@ class _State extends State<LoginPage> {
                           }
                         });
                         Navigator.of(context).pushReplacementNamed(
-                            '/home',
-                            arguments: User(id: 7, name: 'José')
+                            HomePage.routeName,
                         );
-                        // Navigator.pushReplacement(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) =>
-                        //           MyHomePage(title: 'Compras')),
-                        // );
                       },
                     )),
               ],

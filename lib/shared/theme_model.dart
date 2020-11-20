@@ -4,20 +4,23 @@ import 'package:flutter_grocery_list/Models/settings.dart';
 import 'package:get_it/get_it.dart';
 
 /// Enumerador para o tema da aplicacao
-enum ThemeEnum {lightTheme, darkTheme, highContrast, system }
+enum ThemeEnum { lightTheme, darkTheme, highContrast, system }
 
 class ThemeModel extends ChangeNotifier {
   // Atributos da classe
   ThemeEnum _appTheme = ThemeEnum.lightTheme;
 
   // Metodos da classe
-  changeTheme(ThemeEnum theme, BuildContext context) {
+  changeTheme({ThemeEnum theme, BuildContext context}) {
     if (theme == ThemeEnum.system) {
-      // TODO: Implementar a captura do alto contraste pelo sistema.
-      //(MediaQuery.of(context).highContrast == true)
-      (MediaQuery.platformBrightnessOf(context) == Brightness.light)
-          ? appTheme = ThemeEnum.lightTheme
-          : appTheme = ThemeEnum.darkTheme;
+      // Primeiro verifica alto contraste
+      (MediaQuery.of(context).highContrast == true)
+          ? appTheme = ThemeEnum.highContrast
+          :
+          // Depois verifica claro/escuro
+          (MediaQuery.platformBrightnessOf(context) == Brightness.light)
+              ? appTheme = ThemeEnum.lightTheme
+              : appTheme = ThemeEnum.darkTheme;
       return;
     }
     appTheme = theme;
