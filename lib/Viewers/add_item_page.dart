@@ -33,6 +33,7 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
   String itemDescription = '';
   double itemValue = 0.0;
   final loggedUser = GetIt.I<User>();
+  bool isActionSuccess = false;
 
   bool isEdit;
 
@@ -71,75 +72,108 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(18),
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                  child: Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Column(children: [
-                        TextField(
-                          controller: tecItemName,
-                          onChanged: (valor) =>
-                              setState(() => itemName = valor),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Digite o nome do item',
-                          ),
-                        ),
-                        SizedBox(height: 12),
-                        TextField(
-                          controller: tecItemValue,
-                          keyboardType: TextInputType.numberWithOptions(
-                              signed: false, decimal: true),
-                          inputFormatters: [
-                            // ignore: deprecated_member_use
-                            WhitelistingTextInputFormatter(
-                                RegExp(r'^\d+\.?\d{0,2}')),
-                          ],
-                          onChanged: (valor) =>
-                              setState(() => itemValue = double.parse(valor)),
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Digite o valor do item',
-                          ),
-                        )
-                      ]))),
-              SizedBox(height: 12),
-              RaisedButton(
-                onPressed: (itemName != '')
-                    ? () {
-                        if (isEdit) {
-                          // Realiza a edicao do item
-                          if ((itemName != widget.item.name ||
-                              itemValue != widget.item.value))
-                            widget.cart.updateItem(
-                                widget.item.id,
-                                loggedUser.name,
-                                itemName,
-                                itemValue,
-                                widget.item.amount,
-                            widget.item.isDone);
-                        } else {
-                          if (itemName != '') {
-                            // Realiza a adicao do item
-                            widget.cart.addItem(widget.cart.cartList.length + 1,
-                                loggedUser.name, itemName, itemValue, 1, false);
-                          } else {
-                            return null;
-                          }
-                        }
-                        Navigator.of(context).pop();
-                      }
-                    : null,
-                child: Text(
-                  textHint,
+        child: Stack(
+          children: <Widget>[
+            AnimatedOpacity(
+              curve: Curves.easeOutCirc,
+              opacity: !isActionSuccess ? 0 : 1.0,
+              duration: Duration(milliseconds: 1500),
+              child: Expanded(
+                child: Container(
+                  height: double.infinity,
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: <Widget>[
+                      Icon(Icons.done_outline, color: Colors.green,),
+                      Text("Concluído!")
+                    ],
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+            AnimatedOpacity(
+              curve: Curves.bounceIn,
+              opacity: isActionSuccess ? 0 : 1.0,
+              duration: Duration(milliseconds: 1500),
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                        child: Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Column(children: [
+                              TextField(
+                                controller: tecItemName,
+                                onChanged: (valor) =>
+                                    setState(() => itemName = valor),
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Digite o nome do item',
+                                ),
+                              ),
+                              SizedBox(height: 12),
+                              TextField(
+                                controller: tecItemValue,
+                                keyboardType: TextInputType.numberWithOptions(
+                                    signed: false, decimal: true),
+                                inputFormatters: [
+                                  // ignore: deprecated_member_use
+                                  WhitelistingTextInputFormatter(
+                                      RegExp(r'^\d+\.?\d{0,2}')),
+                                ],
+                                onChanged: (valor) =>
+                                    setState(() => itemValue = double.parse(valor)),
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Digite o valor do item',
+                                ),
+                              )
+                            ]))),
+                    SizedBox(height: 12),
+                    RaisedButton(
+                      onPressed: (itemName != '')
+                          ? () {
+                              if (isEdit) {
+                                // Realiza a edicao do item
+                                if ((itemName != widget.item.name ||
+                                    itemValue != widget.item.value))
+                                  widget.cart.updateItem(
+                                      widget.item.id,
+                                      loggedUser.name,
+                                      itemName,
+                                      itemValue,
+                                      widget.item.amount,
+                                  widget.item.isDone);
+                              } else {
+                                if (itemName != '') {
+                                  // Realiza a adicao do item
+                                  widget.cart.addItem(widget.cart.cartList.length + 1,
+                                      loggedUser.name, itemName, itemValue, 1, false);
+                                } else {
+                                  return null;
+                                }
+                              }
+                              setState(() {
+                                isActionSuccess = true;
+                              });
+
+                              Future.delayed(Duration(milliseconds: 2000), (){
+                                Navigator.of(context).pop();
+                              });
+                            }
+                          : null,
+                      child: Text(
+                        textHint,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -54,6 +54,11 @@ class MyApp extends StatelessWidget {
                         }
                       });
                       return child;
+                      // return MediaQuery(
+                      //     data: MediaQueryData(
+                      //       textScaleFactor: 1.0
+                      //     ),
+                      //     child: child);
                     },
                     initialRoute: loggedUser.name != null ? MyHomePage.routeName: LoginPage.routeName,
                     routes: {
