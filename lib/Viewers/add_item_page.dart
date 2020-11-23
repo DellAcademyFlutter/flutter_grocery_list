@@ -169,7 +169,7 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
                               // Remove o foco do textEdit, para realizar dismiss no keyboard.
                               removeFocus(context: context);
 
-                              Future.delayed(Duration(milliseconds: 2000), (){
+                              Future.delayed(Duration(milliseconds: 1500), (){
                                 Navigator.of(context).pop();
                               });
                             }

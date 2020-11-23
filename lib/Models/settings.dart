@@ -6,6 +6,7 @@ class Settings extends ChangeNotifier{
   double _fontSize = 10;
   final ThemeModel themeModel;
   int option = 1;
+  double _defaultFontSize = 10.5;
 
   // Construtor da classe
   Settings(this.themeModel);
@@ -20,7 +21,7 @@ class Settings extends ChangeNotifier{
     option = value;
 
     switch (value) {
-      case 1:
+      case 1: //System
         option = value;
          if(MediaQuery.platformBrightnessOf(context) == Brightness.light) {
           themeModel.isContrast = false;
@@ -30,25 +31,35 @@ class Settings extends ChangeNotifier{
           themeModel.isDarkTheme = true;
          }
         break;
-      case 2:
+      case 2: //Light
         option = value;
         themeModel.isContrast = false;
         themeModel.isDarkTheme = false;
         break;
-      case 3:
+      case 3: //Dark
         option = value;
         themeModel.isContrast = false;
         themeModel.isDarkTheme = true;
         break;
+      case 4: //Contrast
+        option = value;
+        themeModel.isContrast = true;
+        themeModel.isDarkTheme = false;
     }
     notifyListeners();
   }
 
-  // Gets e Sets
   double get fontSize => _fontSize;
 
   set fontSize(double value) {
     _fontSize = value;
     notifyListeners();
   }
+
+  double get defaultFontSize => _defaultFontSize;
+
+  set defaultFontSize(double value) {
+    _defaultFontSize = value;
+  }
+
 }

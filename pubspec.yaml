@@ -22,7 +22,7 @@ environment:
 
 dependencies:
   get_it: ^5.0.1
-  flutter_stetho: ^0.5.2
+  #flutter_stetho: ^0.5.2
   shared_preferences: ^0.5.12+4
   flutter:
     sdk: flutter

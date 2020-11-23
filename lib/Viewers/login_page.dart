@@ -2,12 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_grocery_list/Models/cart.dart';
-import 'package:flutter_grocery_list/Models/item.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:flutter_grocery_list/local/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -104,7 +101,7 @@ class _State extends State<LoginPage> {
                             loggedUser.name = userName;
                             saveUser(nameController.text);
                             SharedPrefs.save("loggedUser", userName);
-                            Future.delayed(Duration(milliseconds: 1500), () {
+                            Future.delayed(Duration(milliseconds: 3000), () {
                               Navigator.of(context)
                                   .pushReplacementNamed(MyHomePage.routeName);
                             });

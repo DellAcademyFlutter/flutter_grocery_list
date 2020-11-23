@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
-import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:get_it/get_it.dart';
 import 'Models/cart.dart';
 import 'Models/settings.dart';
@@ -19,7 +18,7 @@ void main() {
   GetIt.I.registerSingleton<User>(User());
 
   //Inicializando Stetho
-  Stetho.initialize();
+  //Stetho.initialize();
 
   //Execucao do app
   runApp(MyApp());
@@ -33,13 +32,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-        animation: loggedUser,
+        animation: settings.themeModel,
         builder: (context, w) {
           return AnimatedBuilder(
-              animation: settings.themeModel,
+              animation: settings,
               builder: (context, w) {
                 return MaterialApp(
-                    title: 'Flutter Demo',
+                    title: 'Carrinho de compras',
                     theme: settings.themeModel.verifytheme('defaultTheme'),
                     darkTheme: settings.themeModel.verifytheme('isDarkTheme'),
                     debugShowCheckedModeBanner: false,

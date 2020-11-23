@@ -38,7 +38,6 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
   final settings = GetIt.I<Settings>();
   final themeModel = GetIt.I<ThemeModel>();
   bool isSwitched = false;
-  double defaultFontSize = 10.5;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +66,7 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
                       ),
                     ),
                     Text(
-                      "${loggedUser.name}",
+                      "${(loggedUser.name ?? "")}",
                     ),
                   ],
                 ),
@@ -75,56 +74,16 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
               SizedBox(height: 20.0),
               Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Alto-contraste',
-                        ),
-                      ),
-                      Spacer(),
-                      Container(
-                        alignment: Alignment.centerRight,
-                        child: Switch(
-                          value: isSwitched,
-                          onChanged: (value) {
-                            isSwitched = value;
-                            settings.themeModel.changeThemeContrast();
-                          },
-                          activeTrackColor: Colors.amber,
-                          activeColor: Colors.amber,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 5),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(2.0),
+                  padding: const EdgeInsets.all(15.0),
                   child: Column(
                     children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          ' Tamanho do texto',
+                         Align(
+                           alignment: Alignment.centerLeft,
+                           child: Text(
+                            'Tamanho do texto'
                         ),
-                      ),
-                      TextSizeSlider(),
-                      FlatButton(
-                        onPressed: (settings.fontSize != defaultFontSize)
-                            ? () {
-                                settings.fontSize = defaultFontSize;
-                              }
-                            : null,
-                        child: Text(
-                          "Retornar ao tamanho padrão",
-                          style: TextStyle(fontSize: 20.0),
-                        ),
-                      ),
+                         ),
+                      TextSize(),
                     ],
                   ),
                 ),
@@ -133,34 +92,28 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        alignment: Alignment.centerLeft,
-                        child: Column(
-                          children: [
-                            Center(
-                              child: Text(
-                                'Trocar tema',
-                              ),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Trocar tema',
                             ),
-                            SizedBox(height: 4),
-                            RadioButton(context),
-                            //Text('${MediaQuery.platformBrightnessOf(context)}'),
-                          ],
-                        ),
+                          ),
+                          SizedBox(height: 4),
+                          RadioButton(context),
+                        ],
                       ),
-                    ],
                   ),
                 ),
-              ),
               SizedBox(height: 5),
+
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Row(
                     children: [
-                      Container(
+                      Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Sair',
@@ -179,22 +132,6 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Esta classe retorna um widget mensagem com o valor total do [Cart].
-class CartInformations extends StatelessWidget {
-  final cart = GetIt.I<Cart>();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      subtitle: Text(
-        "Valor total: R\$ ${MathUtils.round(cart.totalValueCart, 2)}",
-        style: TextStyle(fontSize: 15, color: Colors.black),
-        textAlign: TextAlign.center,
       ),
     );
   }
@@ -243,7 +180,6 @@ class TextSizeSlider extends StatelessWidget {
       min: 1,
       max: 20,
       divisions: 6,
-      label: "Tamanho",
       onChanged: (newSliderValue) {
         settings.fontSize = newSliderValue;
       },
@@ -251,43 +187,84 @@ class TextSizeSlider extends StatelessWidget {
   }
 }
 
+/// Esta classe retorna um widget referente a configuracao do tamanho da fonte.
+class TextSize extends StatelessWidget {
+  final settings = GetIt.I<Settings>();
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+        animation: settings,
+        builder: (context, widget) {
+          return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(child: TextSizeSlider()),
+                  Center(
+                    child: FlatButton(
+                      onPressed: (settings.fontSize != settings.defaultFontSize)
+                          ? () {
+                              settings.fontSize = settings.defaultFontSize;
+                            }
+                          : null,
+                      child: Text(
+                        "Retornar ao tamanho padrão",
+                        style: TextStyle(fontSize: 20.0),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+        });
+  }
+}
+
 /// Esta classe retorna um widget com slider referente ao tamanho da fonte.
 class RadioButton extends StatelessWidget {
   final settings = GetIt.I<Settings>();
-  BuildContext contextTela;
-
-  RadioButton(this.contextTela);
+  BuildContext contextScreen;
+  RadioButton(this.contextScreen);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Container(
-        alignment: Alignment.centerLeft,
-        child: Row(
-          children: <Widget>[
-            Radio(
-              value: 1,
-              groupValue: settings.option,
-              onChanged: (value) =>
-                  settings.handleRadioValueChange(value, contextTela),
-            ),
-            Text("Sistema"),
-            Radio(
-              value: 2,
-              groupValue: settings.option,
-              onChanged: (value) =>
-                  settings.handleRadioValueChange(value, contextTela),
-            ),
-            Text("Light"),
-            new Radio(
-              value: 3,
-              groupValue: settings.option,
-              onChanged: (value) =>
-                  settings.handleRadioValueChange(value, contextTela),
-            ),
-            Text("Dark"),
-          ],
-        ),
+      child: Row(
+        children: <Widget>[
+          Radio(
+            value: 1,
+            groupValue: settings.option,
+            onChanged: (value) =>
+                settings.handleRadioValueChange(value, contextScreen),
+          ),
+          Text("Sistema"),
+          SizedBox(width: 40),
+          Radio(
+            value: 2,
+            groupValue: settings.option,
+            onChanged: (value) =>
+                settings.handleRadioValueChange(value, contextScreen),
+          ),
+          Text("Claro"),
+          SizedBox(width: 40),
+          Radio(
+            value: 3,
+            groupValue: settings.option,
+            onChanged: (value) =>
+                settings.handleRadioValueChange(value, contextScreen),
+          ),
+          Text("Escuro"),
+          SizedBox(width: 40),
+          Radio(
+            value: 4,
+            groupValue: settings.option,
+            onChanged: (value) =>
+                settings.handleRadioValueChange(value, contextScreen),
+          ),
+          Text("Alto-Contraste"),
+        ],
       ),
     );
   }

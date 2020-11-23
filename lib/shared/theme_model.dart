@@ -7,6 +7,7 @@ class ThemeModel extends ChangeNotifier{
   bool _isDarkTheme = false;
   bool _isContrast = false;
 
+
   bool get isContrast => _isContrast;
 
   set isContrast(bool value) {
@@ -50,7 +51,6 @@ class ThemeModel extends ChangeNotifier{
 }
 
 class Themes {
-
   static defaultTheme() {
     final settings = GetIt.I<Settings>();
 
@@ -67,11 +67,11 @@ class Themes {
         textTheme: TextTheme(
             headline5 : TextStyle(color: Colors.green),
             headline6: TextStyle(
-                fontSize: (10 + settings.fontSize),
+                fontSize: (10.5 + settings.fontSize),
                 color: Colors.black87,
                 fontWeight: FontWeight.bold),
             bodyText2: TextStyle(
-                fontSize: (10 + settings.fontSize),
+                fontSize: (10.5 + settings.fontSize),
                 color: Colors.black87,
                 fontWeight: FontWeight.bold)));
   }
@@ -90,14 +90,14 @@ class Themes {
         ),
 
         textTheme: TextTheme(
-            headline5 : TextStyle(color: Colors.red),
+            headline5 : TextStyle(color: Colors.green),
             headline6: TextStyle(
                 fontSize: (10.5 + settings.fontSize),
-                color: Colors.yellow,
+                color: Colors.black87,
                 fontWeight: FontWeight.bold),
             bodyText2: TextStyle(
                 fontSize: (10.5 + settings.fontSize),
-                color: Colors.yellow,
+                color: Colors.white,
                 fontWeight: FontWeight.bold)));
   }
 

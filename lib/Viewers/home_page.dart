@@ -7,6 +7,7 @@ import 'package:flutter_grocery_list/Models/item.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:flutter_grocery_list/Viewers/items_pages.dart';
 import 'package:flutter_grocery_list/Viewers/profile_page.dart';
+import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:flutter_grocery_list/local/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
@@ -41,20 +42,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   bottom: TabBar(
                     isScrollable: false,
                     tabs: [
-                      Tab(icon: Icon(Icons.remove_shopping_cart)),
-                      Tab(icon: Icon(Icons.add_shopping_cart)),
-                      Tab(icon: Icon(Icons.account_circle)),
+                      Tab(icon: Icon(Icons.remove_shopping_cart, color: Colors.black87)),
+                      Tab(icon: Icon(Icons.add_shopping_cart, color: Colors.black87)),
+                      Tab(icon: Icon(Icons.account_circle, color: Colors.black87)),
                     ],
                   ),
                   title: Row(
                     children: <Widget>[
-                      Column(
-                        children: [
                           Text("Carrinho de: ${loggedUser.name}",
-                            style: TextStyle(color: Colors.black),),
+                            style: TextStyle(color: Colors.black)),
+                          Spacer(),
+                      Card(
+                            child: Text(
+                              " Total: R\$ ${MathUtils.round(cart.totalValueCart, 2)} ", textAlign: TextAlign.right),
+                          ),
                         ],
-                      ),
-                    ],
                   ),
                   backgroundColor:
                   cart.hasSelectedItems() ? Colors.green : Colors.amber,
@@ -123,6 +125,22 @@ Widget ThemeLabel() {
     },
   );
 }
+
+/// Esta classe retorna um widget mensagem com o valor total do [Cart].
+class CartInformations extends StatelessWidget {
+  final cart = GetIt.I<Cart>();
+
+  @override
+  Widget build(BuildContext context) {
+    Text(
+        "Valor total: R\$ ${MathUtils.round(cart.totalValueCart, 2)}",
+        style: TextStyle(fontSize: 15, color: Colors.black),
+        textAlign: TextAlign.center,
+      );
+  }
+}
+
+
 
 
 
