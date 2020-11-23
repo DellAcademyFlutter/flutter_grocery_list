@@ -30,22 +30,38 @@ class LoadingScreenState extends State<LoadingScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: Text('Grocery app'),
+          centerTitle: true,
+        ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text('Grocery app'),
-              SizedBox(height: 20,),
-              Container(child: Image.network(
-                  'https://static.vecteezy.com/system/resources/previews/000/472/422/non_2x/shopping-supermarket-cart-with-grocery-pictogram-vector.jpg')),
-              SizedBox(height: 20,),
-              CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                backgroundColor: Colors.grey,
+          child: Container(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Icon(
+                    Icons.shopping_cart,
+                    size: 200,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                    backgroundColor: Colors.grey,
+                  ),
+                  Text(
+                    'Carregando...',
+                  ),
+                ],
               ),
-              Expanded(child: Text('Carregando...',)),
-            ],
+            ),
           ),
         ),
       ),
@@ -60,4 +76,3 @@ Future runInitTasks(BuildContext context) async {
     Navigator.pushReplacementNamed(context, LoginPage.routeName);
   });
 }
-

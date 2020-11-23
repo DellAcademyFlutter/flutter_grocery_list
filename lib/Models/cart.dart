@@ -99,7 +99,7 @@ class Cart extends ChangeNotifier {
   }
 
   /// Este metodo remove um item de [itemList] baseado em um indice [index].
-  removeItem(int index) {
+  removeItem({int index}) {
     // Atualiza o preco total do carrinho
     totalValue -= itemList[index].value * itemList[index].qtt;
     qttItems -= itemList[index].qtt;
@@ -114,7 +114,7 @@ class Cart extends ChangeNotifier {
   }
 
   /// Este metodo marca concluido em um item
-  checkItem(int index){
+  checkItem({int index}){
     Item item = itemList[index];
     item.isDone = true;
 
@@ -164,7 +164,7 @@ class Cart extends ChangeNotifier {
   }
 
   /// Este metodo aumenta a quantidade de um item especificado por seu [index]
-  increaseItemQtt(index) {
+  increaseItemQtt({int index}) {
     itemList[index].qtt++;
     qttItems++;
     totalValue += itemList[index].value;
@@ -177,7 +177,7 @@ class Cart extends ChangeNotifier {
   }
 
   /// Este metodo aumenta a quantidade de um item especificado por seu [index]
-  decreaseItemQtt(index) {
+  decreaseItemQtt({int index}) {
     if (itemList[index].qtt > 1) {
       itemList[index].qtt--;
       qttItems--;
@@ -201,14 +201,14 @@ class Cart extends ChangeNotifier {
   }
 
   /// Este metodo marca true no atributo select deste [item]
-  selectItem(index) {
+  selectItem({int index}) {
     itemList[index].selected = true;
 
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }
 
   /// Este metodo alterna o atributo selecao de um item
-  toggleSelectItem(index) {
+  toggleSelectItem({int index}) {
     itemList[index].selected = !itemList[index].selected;
 
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.

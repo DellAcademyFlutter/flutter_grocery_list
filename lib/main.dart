@@ -1,12 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_grocery_list/Models/settings.dart';
+import 'package:flutter_grocery_list/Models/UserSettings.dart';
 import 'package:flutter_grocery_list/Viewers/create_item_page.dart';
 import 'package:flutter_grocery_list/Viewers/home_page.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
-import 'package:flutter_grocery_list/shared_preferences/load_user.dart';
-import 'package:flutter_stetho/flutter_stetho.dart';
+//import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:get_it/get_it.dart';
 import 'Models/cart.dart';
 import 'Models/user.dart';
@@ -20,7 +19,7 @@ void main() {
   GetIt.I.registerSingleton<Settings>(
       Settings(GetIt.I<ThemeModel>())); // Um singleton [ThemeModel]
   GetIt.I.registerSingleton<User>(User()); // Um singleton de User
-  Stetho.initialize();
+  //Stetho.initialize();
 
   // Execucao do aplicativo
   runApp(MyApp());
@@ -40,7 +39,7 @@ class MyApp extends StatelessWidget {
               animation: settings,
               builder: (context, w) {
                 return MaterialApp(
-                    title: 'Flutter Demo',
+                    title: 'Grocery App',
                     theme: Themes.getAppTheme(),
                     darkTheme: Themes.darkTheme(),
                     debugShowCheckedModeBanner: false,
@@ -48,7 +47,6 @@ class MyApp extends StatelessWidget {
                     routes: {
                       // Rotas sem argumentos. A primeira rota possui o caminho '/'
                       LoadingScreen.routeName: (context) => LoadingScreen(),
-                      LoginPage.routeName: (context) => LoginPage(),
                       HomePage.routeName: (context) => HomePage(),
                     },
                     onGenerateRoute: (settings) {

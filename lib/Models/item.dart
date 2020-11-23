@@ -14,7 +14,7 @@ class Item {
   bool isDone = false;
 
   /// Atribui os valores dos parametros deste [Item] dado um [Map] Jason.
-  Item.fromJson(Map<String, dynamic> json) {
+  Item.fromJson({Map<String, dynamic> json}) {
     id = json['id'];
     fqUserId = json['fqCartId'];
     qtt = json['qtt'];

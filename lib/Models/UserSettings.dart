@@ -19,20 +19,17 @@ class Settings extends ChangeNotifier {
 
   // Gets e Sets
   double get fontSize => _fontSize;
-
   set fontSize(double value) {
     _fontSize = value;
     notifyListeners();
   }
 
   double get defaultFontSize => _defaultFontSize;
-
   set defaultFontSize(double value) {
     _defaultFontSize = value;
   }
 
   String get themeDescription => _themeDescription;
-
   set themeDescription(String value) {
     _themeDescription = value;
   }

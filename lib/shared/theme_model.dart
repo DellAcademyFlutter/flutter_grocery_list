@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_grocery_list/Models/settings.dart';
+import 'package:flutter_grocery_list/Models/UserSettings.dart';
 import 'package:get_it/get_it.dart';
 
 /// Enumerador para o tema da aplicacao
@@ -57,7 +57,7 @@ class Themes {
     final settings = GetIt.I<Settings>();
 
     return ThemeData(
-      scaffoldBackgroundColor: Colors.blueGrey[200],
+      scaffoldBackgroundColor: Colors.blueGrey[100],
       appBarTheme: AppBarTheme(
         textTheme: TextTheme(
           headline6: TextStyle(

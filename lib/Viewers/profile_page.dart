@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
-import 'package:flutter_grocery_list/Models/settings.dart';
+import 'package:flutter_grocery_list/Models/UserSettings.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:flutter_grocery_list/shared_preferences/shared_prefs.dart';

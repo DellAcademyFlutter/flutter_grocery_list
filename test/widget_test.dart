@@ -7,11 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
-import 'package:flutter_grocery_list/Models/item.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:flutter_grocery_list/main.dart';
-import 'package:get_it/get_it.dart';
 
 void main() {
   /// Teste para verificacao do preço total do carrinho
@@ -30,7 +26,7 @@ void main() {
 
     cart.addItem(id: 0, fqUserId: 'anonimo', name:'item 1', description:'item 1', value:2.0, qtt:2, isDone: false);
     cart.addItem(id: 1, fqUserId: 'anonimo', name:'item 2', description:'item 2', value:3.0, qtt:2, isDone: false);
-    cart.checkItem(0);
+    cart.checkItem(index: 0);
 
     expect(cart.itemList[0].isDone, true);
   });

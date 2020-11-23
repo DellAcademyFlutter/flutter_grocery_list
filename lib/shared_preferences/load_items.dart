@@ -24,7 +24,7 @@ class LoadItems {
         // Se a key for do tipo item, ela contem a string item.
         if (key.contains("item")) {
           SharedPrefs.read(key).then((value) {
-            Item item = Item.fromJson(jsonDecode(value));
+            Item item = Item.fromJson(json: jsonDecode(value));
             if (item.fqUserId == loggedUserId) {
               cart.addItem(id: item.id, fqUserId: item.fqUserId, name: item.name, description: item.description,
                   value: item.value, qtt: item.qtt, isDone: item.isDone);

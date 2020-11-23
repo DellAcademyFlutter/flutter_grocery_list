@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
                   children: <Widget>[
                     Column(
                       children: [
-                        Text("Compras de ${loggedUser.name}"),
+                        Text("Compras de ${loggedUser.name ?? ''}"),
                       ],
                     ),
                   ],

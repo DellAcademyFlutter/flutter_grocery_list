@@ -76,7 +76,7 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
   return (cart.itemList[index].isDone == itemType)
       ? GestureDetector(
           onTap: () {
-            cart.toggleSelectItem(index);
+            cart.toggleSelectItem(index: index);
           },
           child: Dismissible(
             // Adiciona comportamento slide
@@ -111,7 +111,7 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
                         ),
                         Row(children: <Widget>[
                           InkWell(
-                              onTap: () => cart.increaseItemQtt(index),
+                              onTap: () => cart.increaseItemQtt(index: index),
                               child: Icon(Icons.add, color: Colors.green[800])),
                           Text('${cart.itemList[index].qtt}',
                               style: TextStyle(
@@ -119,7 +119,7 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
                                       ? TextDecoration.lineThrough
                                       : null)),
                           InkWell(
-                              onTap: () => cart.decreaseItemQtt(index),
+                              onTap: () => cart.decreaseItemQtt(index: index),
                               child: Icon(Icons.remove, color: Colors.red)),
                         ]),
                       ]),
@@ -154,7 +154,7 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
                             ),
                             onPressed: () {
                               //Remove o lista no index selecionado
-                              cart.removeItem(index);
+                              cart.removeItem(index: index);
                               Navigator.of(context).pop();
                             },
                           ),
