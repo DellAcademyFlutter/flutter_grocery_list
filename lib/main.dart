@@ -10,6 +10,7 @@ import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:get_it/get_it.dart';
 import 'Models/cart.dart';
 import 'Models/user.dart';
+import 'Viewers/intro_page.dart';
 import 'Viewers/login_page.dart';
 
 void main() {
@@ -43,17 +44,12 @@ class MyApp extends StatelessWidget {
                     theme: Themes.getAppTheme(),
                     darkTheme: Themes.darkTheme(),
                     debugShowCheckedModeBanner: false,
-                    initialRoute: loggedUser != null
-                        ? HomePage.routeName
-                        : LoginPage.routeName,
+                    //initialRoute: LoadingScreen.routeName,
                     routes: {
-                      // Rotas sem argumentos
+                      // Rotas sem argumentos. A primeira rota possui o caminho '/'
+                      LoadingScreen.routeName: (context) => LoadingScreen(),
                       LoginPage.routeName: (context) => LoginPage(),
                       HomePage.routeName: (context) => HomePage(),
-                    },
-                    builder: (context, child) {
-                      LoadUser.load(); // Carrega o usuario
-                      return child;
                     },
                     onGenerateRoute: (settings) {
                       // Rotas com argumentos.
@@ -72,8 +68,20 @@ class MyApp extends StatelessWidget {
                             );
                           }
                           break;
+                        case LoginPage.routeName:
+                          {
+                            return MaterialPageRoute(
+                              builder: (context) {
+                                return loggedUser.name != null
+                                    ? HomePage()
+                                    : LoginPage();
+                              },
+                            );
+                          }
+                          break;
                         default: // Caso precise implementar
-                          assert(false, 'Need to implement ${settings.name}');
+                          assert(false,
+                              'Falta implementar a rota ${settings.name}');
                           return null;
                       }
                     });

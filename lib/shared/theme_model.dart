@@ -57,6 +57,7 @@ class Themes {
     final settings = GetIt.I<Settings>();
 
     return ThemeData(
+      scaffoldBackgroundColor: Colors.blueGrey[200],
       appBarTheme: AppBarTheme(
         textTheme: TextTheme(
           headline6: TextStyle(

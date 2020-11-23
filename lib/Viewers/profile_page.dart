@@ -314,12 +314,10 @@ class LogoutButton extends StatelessWidget {
         onTap: () {
           SharedPrefs.contains("loggedUser").then((value) {
             if (value) {
+              Navigator.pushReplacementNamed(context, LoginPage.routeName);
               loggedUser.name = null;
               SharedPrefs.remove("loggedUser");
               cart.clean(); // limpa o carrinho.
-              Navigator.pushReplacementNamed(context, '/');
-            } else {
-              Navigator.pushReplacementNamed(context, LoginPage.routeName);
             }
           });
         },

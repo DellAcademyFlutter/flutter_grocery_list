@@ -1,13 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:flutter_grocery_list/shared_preferences/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
-  static const routeName = "/";
+  static const routeName = "/login";
 
   @override
   State<StatefulWidget> createState() => new _State();
