@@ -15,23 +15,17 @@ class Cart extends ChangeNotifier {
   List<Item> cartList = List();
 
   /// Este metodo adiciona um item de [cartList].
-  addItem(int id, String userName, String name, double value, int qtt, bool isDone) {
+  addItem({int id, String userName, String name, double value, int qtt, bool isDone}) {
     Item item =
         Item(id: cartList.length + 1, user: userName, name: name, value: value, amount: 1, isDone: isDone);
     cartList.add(item);
     totalValueCart += item.value;
     amountItems++;
 
-    exportItemToLocalStorage(userName);
+    SharedPrefs.save(
+        "${userName}_item_${item.id}", jsonEncode(item.toJson()));
 
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
-  }
-
-  //Salva no local Storage todos os itens do carrinho
-  exportItemToLocalStorage(String userName) {
-    for (int i = 0; i < cartList.length; i++) {
-      SharedPrefs.save("${userName}_item_ ${i}", jsonEncode(cartList[i]));
-    }
   }
 
   /// Este metodo atualiza um item de [cartList].
@@ -50,6 +44,10 @@ class Cart extends ChangeNotifier {
     // Modifica o novo preco
     totalValueCart += cartList[index].value * cartList[index].amount;
 
+    // Salva o item em Local Storage
+    SharedPrefs.save(
+        "${user}_item_${item.id}", jsonEncode(item.toJson()));
+
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }
 
@@ -57,6 +55,10 @@ class Cart extends ChangeNotifier {
   removeItem(int index) {
     // Atualiza o preco total do carrinho
     totalValueCart -= cartList[index].value * cartList[index].amount;
+
+    // Remove o item no local storage
+    SharedPrefs.remove("${cartList[index].user}_item_${cartList[index].id}");
+
     // Remove o item
     amountItems -= cartList[index].amount;
     cartList.removeAt(index);
@@ -72,7 +74,19 @@ class Cart extends ChangeNotifier {
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }
 
-  /// Este metodo realiza um check todos os itens selecionados.
+
+  /// Este metodo marca concluido em um item
+  checkItem(int index){
+    Item item = cartList[index];
+    item.isDone = true;
+
+    // Salva o item em Local Storage
+    SharedPrefs.save("item_${item.user}_${item.id}",
+        jsonEncode(item.toJson()));
+
+    notifyListeners(); // Notifica aos observadores uma mudanca na lista.
+  }
+    /// Este metodo realiza um check todos os itens selecionados.
   checkSelectedItems() {
     // Percorre todos os itens do carrinho.
     for (int i = cartList.length - 1; i > -1; i--) {
@@ -80,6 +94,10 @@ class Cart extends ChangeNotifier {
         // Marca o item.
         cartList[i].isDone = !cartList[i].isDone;
         cartList[i].selected = false;
+
+        // Salva o item em Local Storage
+        SharedPrefs.save("${cartList[i].user}_item_${cartList[i].id}",
+            jsonEncode(cartList[i].toJson()));
       }
     }
 
@@ -94,6 +112,10 @@ class Cart extends ChangeNotifier {
         // Atualiza o preco total do carrinho
         totalValueCart -= cartList[i].value * cartList[i].amount;
         amountItems -= cartList[i].amount;
+
+        // Remove no shared prefs
+        SharedPrefs.remove("${cartList[i].user}_item_${cartList[i].id}");
+
         // Remove o item
         cartList.removeAt(i);
       }
@@ -108,6 +130,11 @@ class Cart extends ChangeNotifier {
     amountItems++;
 
     totalValueCart += cartList[index].value;
+
+    // Salva o item em Local Storage
+    SharedPrefs.save("${cartList[index].user}_item_${cartList[index].id}",
+        jsonEncode(cartList[index].toJson()));
+
     notifyListeners(); // Notifica aos observadores uma mudanca na lista.
   }
 
@@ -117,6 +144,10 @@ class Cart extends ChangeNotifier {
       cartList[index].amount--;
       amountItems--;
       totalValueCart -= cartList[index].value;
+
+      // Salva o item em Local Storage
+      SharedPrefs.save("${cartList[index].user}_item_${cartList[index].id}",
+          jsonEncode(cartList[index].toJson()));
 
       notifyListeners(); // Notifica aos observadores uma mudanca na lista.
     }

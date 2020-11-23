@@ -25,4 +25,10 @@ class SharedPrefs{
     final prefs = await SharedPreferences.getInstance();
     prefs.remove(key);
   }
+
+  static removeAllKeys() async {
+    final pref = await SharedPreferences.getInstance();
+    await pref.clear();
+  }
+
 }

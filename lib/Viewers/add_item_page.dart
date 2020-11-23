@@ -70,68 +70,72 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
         centerTitle: true,
         backgroundColor: Colors.amber,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Stack(
-          children: <Widget>[
-            AnimatedOpacity(
-              curve: Curves.easeOutCirc,
-              opacity: !isActionSuccess ? 0 : 1.0,
-              duration: Duration(milliseconds: 1500),
-              child: Expanded(
-                child: Container(
-                  height: double.infinity,
-                  width: double.infinity,
-                  alignment: Alignment.center,
-                  child: Column(
-                    children: <Widget>[
-                      Icon(Icons.done_outline, color: Colors.green,),
-                      Text("Concluído!")
-                    ],
-                  ),
+      body: Stack(
+        // Empilha widgets
+        alignment: AlignmentDirectional.center,
+        children: <Widget>[
+          Positioned(
+            bottom: MediaQuery.of(context).size.height / 2,
+            child: AnimatedOpacity(
+              curve: Curves.linear,
+              opacity: !isActionSuccess ? 0.0 : 1.0,
+              duration: Duration(milliseconds: 1000),
+              child: Container(
+                alignment: Alignment.center,
+                child: Column(
+                  children: <Widget>[
+                    Icon(
+                      Icons.done_outline,
+                      color: Colors.green,
+                    ),
+                    Text("Concluído!")
+                  ],
                 ),
               ),
             ),
-            AnimatedOpacity(
-              curve: Curves.bounceIn,
-              opacity: isActionSuccess ? 0 : 1.0,
-              duration: Duration(milliseconds: 1500),
-              child: Container(
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                        child: Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: Column(children: [
-                              TextField(
-                                controller: tecItemName,
-                                onChanged: (valor) =>
-                                    setState(() => itemName = valor),
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  hintText: 'Digite o nome do item',
-                                ),
+          ),
+          AnimatedOpacity(
+            curve: Curves.bounceIn,
+            opacity: isActionSuccess ? 0 : 1.0,
+            duration: Duration(milliseconds: 0),
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                      child: Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Column(children: [
+                            TextField(
+                              controller: tecItemName,
+                              onChanged: (valor) =>
+                                  setState(() => itemName = valor),
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'Digite o nome do item',
                               ),
-                              SizedBox(height: 12),
-                              TextField(
-                                controller: tecItemValue,
-                                keyboardType: TextInputType.numberWithOptions(
-                                    signed: false, decimal: true),
-                                inputFormatters: [
-                                  // ignore: deprecated_member_use
-                                  WhitelistingTextInputFormatter(
-                                      RegExp(r'^\d+\.?\d{0,2}')),
-                                ],
-                                onChanged: (valor) =>
-                                    setState(() => itemValue = double.parse(valor)),
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  hintText: 'Digite o valor do item',
-                                ),
-                              )
-                            ]))),
+                            ),
+                            SizedBox(height: 12),
+                            SizedBox(height: 12),
+                            TextField(
+                              controller: tecItemValue,
+                              keyboardType: TextInputType.numberWithOptions(
+                                  signed: false, decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d+\.?\d{0,2}')),
+                              ],
+                              onChanged: (valor) => setState(
+                                      () => itemValue = double.parse(valor)),
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'Digite o valor do item',
+                              ),
+                            )
+                          ]),
+                      ),
+                  ),
                     SizedBox(height: 12),
                     RaisedButton(
                       onPressed: (itemName != '')
@@ -150,8 +154,10 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
                               } else {
                                 if (itemName != '') {
                                   // Realiza a adicao do item
-                                  widget.cart.addItem(widget.cart.cartList.length + 1,
-                                      loggedUser.name, itemName, itemValue, 1, false);
+                                  widget.cart..addItem(id: widget.cart.cartList.length + 1,
+                                      userName: loggedUser.name, name: itemName, value: itemValue,
+                                      qtt: 1, isDone: false);
+
                                 } else {
                                   return null;
                                 }
@@ -159,6 +165,9 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
                               setState(() {
                                 isActionSuccess = true;
                               });
+
+                              // Remove o foco do textEdit, para realizar dismiss no keyboard.
+                              removeFocus(context: context);
 
                               Future.delayed(Duration(milliseconds: 2000), (){
                                 Navigator.of(context).pop();
@@ -175,7 +184,16 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
             ),
           ],
         ),
-      ),
-    );
+      );
+  }
+}
+
+/// Este metodo remove o focus de um widget.
+removeFocus({BuildContext context}) {
+  FocusScopeNode currentFocus = FocusScope.of(context);
+
+  // Remove o focus do widget atual
+  if (!currentFocus.hasPrimaryFocus) {
+    currentFocus.unfocus();
   }
 }

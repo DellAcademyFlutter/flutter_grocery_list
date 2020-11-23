@@ -7,6 +7,7 @@ import 'package:flutter_grocery_list/Models/item.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
 import 'package:flutter_grocery_list/local/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -19,99 +20,115 @@ class LoginPage extends StatefulWidget {
 class _State extends State<LoginPage> {
   TextEditingController nameController = TextEditingController();
   final loggedUser = GetIt.I<User>();
+  String userName;
+  bool isActionSuccess = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Center(child: Text('Login')),
-          backgroundColor: Colors.amber,
-        ),
-        body: Padding(
-            padding: EdgeInsets.all(10),
-            child: ListView(
-              children: <Widget>[
-                Container(
-                    alignment: Alignment.topLeft,
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      'Defina seu perfil',
-                      style: TextStyle(
-                          color: Colors.amber,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 30),
-                    )),
-                Container(
-                  padding: EdgeInsets.all(10),
-                  child: TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Nome de usuário',
-                    ),
+      appBar: AppBar(
+        title: Center(child: Text('Login')),
+        backgroundColor: Colors.amber,
+      ),
+      body: Stack(
+          // Empilha widgets
+          alignment: AlignmentDirectional.center,
+          children: <Widget>[
+            Positioned(
+              bottom: MediaQuery.of(context).size.height / 2,
+              child: AnimatedOpacity(
+                curve: Curves.easeInOutCirc,
+                opacity: !isActionSuccess ? 0.0 : 1.0,
+                duration: Duration(milliseconds: 1000),
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Column(
+                    children: <Widget>[
+                      Icon(
+                        Icons.shopping_cart,
+                        size: 120,
+                        color: Colors.amberAccent,
+                      ),
+                      Text("Carregando o carrinho de ${nameController.text}"),
+                      SizedBox(height: 20),
+                      CircularProgressIndicator(
+                        valueColor:
+                            new AlwaysStoppedAnimation<Color>(Colors.amber),
+                      )
+                    ],
                   ),
                 ),
-                SizedBox(height: 5),
-                Container(
-                    height: 50,
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    child: RaisedButton(
-                      textColor: Colors.black,
-                      color: Colors.amber,
-                      child: Text('Login'),
-                      onPressed: () {
-                        loggedUser.name = nameController.text;
-                        SharedPrefs.save("loggedUser", nameController.text);
-                        //importItemToLocalStorage(nameController.text);
-                        Navigator.of(context)
-                            .pushReplacementNamed(MyHomePage.routeName);
-                      },
-                    )),
-              ],
-            )));
+              ),
+            ),
+            AnimatedOpacity(
+              curve: Curves.bounceIn,
+              opacity: isActionSuccess ? 0 : 1.0,
+              duration: Duration(milliseconds: 0),
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: ListView(
+                  children: <Widget>[
+                    Container(
+                        alignment: Alignment.topLeft,
+                        padding: EdgeInsets.all(10),
+                        child: Text(
+                          'Defina seu perfil',
+                          style: TextStyle(
+                              color: Colors.amber,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 30),
+                        )),
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: TextField(
+                        controller: nameController,
+                        onChanged: (valor) =>
+                            setState(() => userName = valor.trim().toLowerCase()),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Digite o seu perfil',
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Container(
+                        height: 50,
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        child: RaisedButton(
+                          textColor: Colors.black,
+                          color: Colors.amber,
+                          child: Text('Entrar'),
+                          onPressed: () {
+                            removeFocus(context: context);
+                            isActionSuccess = true;
+                            loggedUser.name = userName;
+                            saveUser(nameController.text);
+                            SharedPrefs.save("loggedUser", userName);
+                            Future.delayed(Duration(milliseconds: 1500), () {
+                              Navigator.of(context)
+                                  .pushReplacementNamed(MyHomePage.routeName);
+                            });
+                          },
+                        )),
+                  ],
+                ),
+              ),
+            ),
+          ]),
+    );
   }
+}
 
-  /// Verifica se o usuário já possui algum carrinho salvo
-  importItemToLocalStorage(String userName) async {
-    // Ler todas as keys em Local Storage.
-    SharedPrefs.getKeysCollection().then((value) {
-      final cartlist = GetIt.I<Cart>();
+saveUser(String name) {
+  SharedPrefs.save("${name}", '${name}');
+}
 
-      String key;
+/// Este metodo remove o focus de um widget.
+removeFocus({BuildContext context}) {
+  FocusScopeNode currentFocus = FocusScope.of(context);
 
-      for (int i = 0; i < value.length; i++) {
-        key = value.elementAt(i);
-
-        if (key.contains(userName)) {
-          SharedPrefs.read(key).then((value) {
-            Item item = Item.fromJson(jsonDecode(value));
-            cartlist.addItem(item.id, item.user, item.name, item.value,
-                item.amount, item.isDone);
-          });
-        }
-      }
-    });
-  }
-
-  /// Verifica se o usuário já possui algum carrinho salvo
-  removeAllUsers(String userName) async {
-    // Ler todas as keys em Local Storage.
-    SharedPrefs.getKeysCollection().then((value) {
-      final cartlist = GetIt.I<Cart>();
-
-      String key;
-
-      for (int i = 0; i < value.length; i++) {
-        key = value.elementAt(i);
-
-        if (!key.contains('item')) {
-          SharedPrefs.read(key).then((value) {
-            Item item = Item.fromJson(jsonDecode(value));
-            cartlist.addItem(item.id, item.user, item.name, item.value,
-                item.amount, item.isDone);
-          });
-        }
-      }
-    });
+  // Remove o focus do widget atual
+  if (!currentFocus.hasPrimaryFocus) {
+    currentFocus.unfocus();
   }
 }

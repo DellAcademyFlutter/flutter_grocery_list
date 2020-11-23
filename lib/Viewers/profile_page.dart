@@ -7,6 +7,7 @@ import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:flutter_grocery_list/local/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Esta classe implementa a pagina de perfil de [User].
 class ProfilePage extends StatelessWidget {
@@ -205,12 +206,9 @@ logoutMethod(BuildContext context) {
 
   SharedPrefs.contains("loggedUser").then((value) {
     if (value) {
-      cart.exportItemToLocalStorage(loggedUser.name);
-      saveUser(loggedUser);
       SharedPrefs.remove("loggedUser");
       loggedUser.name = null;
       cart.removeAll();
-
       Navigator.pushReplacementNamed(context, '/');
     } else {
       Navigator.pushReplacementNamed(context, '/');
@@ -223,12 +221,13 @@ class Logout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () {
+        onTap: () async {
           logoutMethod(context);
         },
         child: Icon(
           Icons.power_settings_new,
           semanticLabel: "logout",
+          color: Colors.red,
         ));
   }
 }
@@ -250,10 +249,6 @@ class TextSizeSlider extends StatelessWidget {
       },
     );
   }
-}
-
-saveUser(User user) {
-  SharedPrefs.save("${user.name}", '${user.name}');
 }
 
 /// Esta classe retorna um widget com slider referente ao tamanho da fonte.

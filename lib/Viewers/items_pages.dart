@@ -316,7 +316,7 @@ FloatingActionButton addItem(BuildContext context) {
     },
     tooltip: 'Add',
     backgroundColor: Colors.amber,
-    child: Icon(Icons.add),
+    child: Icon(Icons.add, color: Colors.black),
   );
 }
 

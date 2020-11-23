@@ -100,8 +100,8 @@ importItemToLocalStorage(String userName) async {
       if (key.contains(userName)) {
         SharedPrefs.read(key).then((value) {
           Item item = Item.fromJson(jsonDecode(value));
-          cartlist.addItem(item.id, item.user, item.name, item.value,
-              item.amount, item.isDone);
+          cartlist.addItem(id: item.id, userName: item.user, name: item.name, value: item.value,
+              qtt: item.amount, isDone: item.isDone);
         });
       }
     }
