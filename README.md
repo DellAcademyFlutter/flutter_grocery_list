@@ -17,5 +17,6 @@ Equipe:
 3.Uma vez logado no sistema, o usuário permanece logado até realizar o logout (na terceira aba da tela principal). As preferências de tema e tamanho da fonte também permanecem.
 
 ## Screenshots
+
   <img src="screenshots_readme/glossery_login.png" width="300">  <img src="screenshots_readme/glossery_tela_principal.png" width="300">
   <img src="screenshots_readme/glossery_itens_feitos.png" width="300">  <img src="screenshots_readme/glossery_configuracoes.png" width="300">
