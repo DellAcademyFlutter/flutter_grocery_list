@@ -7,6 +7,7 @@ import 'package:flutter_grocery_list/shared/theme_model.dart';
 import 'package:flutter_grocery_list/shared_preferences/shared_prefs.dart';
 import 'package:get_it/get_it.dart';
 
+import '../shared/math_utils.dart';
 import 'login_page.dart';
 
 /// Esta classe implementa a pagina de perfil de [User].
@@ -107,7 +108,7 @@ class CartTotalValue extends StatelessWidget {
                 "Valor total do carrinho: ",
               ),
               trailing: Text(
-                "R\$ ${cart.totalValue}",
+                "R\$ ${MathUtils.round(cart.totalValue, 2)}",
                 textAlign: TextAlign.right,
               ),
             ),
