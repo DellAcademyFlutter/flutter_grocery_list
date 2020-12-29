@@ -43,10 +43,12 @@ class ThemeModel extends ChangeNotifier{
 
   changeTheme(){
     isDarkTheme = !isDarkTheme;
+    notifyListeners();
   }
 
   changeThemeContrast(){
     isContrast = !isContrast;
+    notifyListeners();
   }
 }
 

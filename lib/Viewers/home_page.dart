@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_grocery_list/Models/cart.dart';
 import 'package:flutter_grocery_list/Models/item.dart';
 import 'package:flutter_grocery_list/Models/user.dart';
-import 'package:flutter_grocery_list/Viewers/items_pages.dart';
+import 'package:flutter_grocery_list/Viewers/items_page.dart';
 import 'package:flutter_grocery_list/Viewers/profile_page.dart';
 import 'package:flutter_grocery_list/shared/math_utils.dart';
 import 'package:flutter_grocery_list/shared/theme_model.dart';
@@ -47,15 +47,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       Tab(icon: Icon(Icons.account_circle, color: Colors.black87)),
                     ],
                   ),
-                  title: Row(
+                  title: Column(
                     children: <Widget>[
                           Text("Carrinho de: ${loggedUser.name}",
                             style: TextStyle(color: Colors.black)),
-                          Spacer(),
-                      Card(
-                            child: Text(
-                              " Total: R\$ ${MathUtils.round(cart.totalValueCart, 2)} ", textAlign: TextAlign.right),
-                          ),
+                           Text(
+                          " Total: R\$ ${MathUtils.round(cart.totalValueCart, 2)} ", textAlign: TextAlign.center,
+                           style: TextStyle(color: Colors.blueAccent),),
                         ],
                   ),
                   backgroundColor:

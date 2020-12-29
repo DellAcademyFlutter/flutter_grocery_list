@@ -25,6 +25,7 @@ class CreateEditItemPage extends StatefulWidget {
 
 /// [State] da pagina de adicao/edicao de [Item].
 class _CreateEditItemPageState extends State<CreateEditItemPage> {
+  final loggedUser = GetIt.I<User>();
   TextEditingController tecItemName;
   TextEditingController tecItemValue;
   String textHint = 'Adicionar Item';
@@ -32,7 +33,6 @@ class _CreateEditItemPageState extends State<CreateEditItemPage> {
   String itemName = '';
   String itemDescription = '';
   double itemValue = 0.0;
-  final loggedUser = GetIt.I<User>();
   bool isActionSuccess = false;
 
   bool isEdit;

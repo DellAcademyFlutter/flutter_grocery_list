@@ -11,18 +11,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Esta classe implementa a pagina de perfil de [User].
 class ProfilePage extends StatelessWidget {
-  final cart = GetIt.I<Cart>();
   final loggedUser = GetIt.I<User>();
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-        animation: cart,
-        builder: (context, w) {
-          return Scaffold(
-            body: BuildProfilePage(),
-          );
-        });
+    return Scaffold(
+      body: BuildProfilePage(),
+    );
   }
 }
 
@@ -77,12 +72,10 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
                   padding: const EdgeInsets.all(15.0),
                   child: Column(
                     children: [
-                         Align(
-                           alignment: Alignment.centerLeft,
-                           child: Text(
-                            'Tamanho do texto'
-                        ),
-                         ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Tamanho do texto'),
+                      ),
                       TextSize(),
                     ],
                   ),
@@ -92,22 +85,21 @@ class _BuildProfilePageState extends State<BuildProfilePage> {
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Trocar tema',
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          RadioButton(context),
-                        ],
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Trocar tema',
+                        ),
                       ),
+                      SizedBox(height: 4),
+                      RadioButton(context),
+                    ],
                   ),
                 ),
+              ),
               SizedBox(height: 5),
-
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
@@ -158,7 +150,7 @@ class Logout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () async {
+        onTap: () {
           logoutMethod(context);
         },
         child: Icon(
@@ -197,27 +189,27 @@ class TextSize extends StatelessWidget {
         animation: settings,
         builder: (context, widget) {
           return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(child: TextSizeSlider()),
-                  Center(
-                    child: FlatButton(
-                      onPressed: (settings.fontSize != settings.defaultFontSize)
-                          ? () {
-                              settings.fontSize = settings.defaultFontSize;
-                            }
-                          : null,
-                      child: Text(
-                        "Retornar ao tamanho padrão",
-                        style: TextStyle(fontSize: 20.0),
-                      ),
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(child: TextSizeSlider()),
+                Center(
+                  child: FlatButton(
+                    onPressed: (settings.fontSize != settings.defaultFontSize)
+                        ? () {
+                            settings.fontSize = settings.defaultFontSize;
+                          }
+                        : null,
+                    child: Text(
+                      "Retornar ao tamanho padrão",
+                      style: TextStyle(fontSize: 20.0),
                     ),
                   ),
-                ],
-              ),
-            );
+                ),
+              ],
+            ),
+          );
         });
   }
 }
@@ -230,42 +222,54 @@ class RadioButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        children: <Widget>[
-          Radio(
-            value: 1,
-            groupValue: settings.option,
-            onChanged: (value) =>
-                settings.handleRadioValueChange(value, contextScreen),
-          ),
-          Text("Sistema"),
-          SizedBox(width: 40),
-          Radio(
-            value: 2,
-            groupValue: settings.option,
-            onChanged: (value) =>
-                settings.handleRadioValueChange(value, contextScreen),
-          ),
-          Text("Claro"),
-          SizedBox(width: 40),
-          Radio(
-            value: 3,
-            groupValue: settings.option,
-            onChanged: (value) =>
-                settings.handleRadioValueChange(value, contextScreen),
-          ),
-          Text("Escuro"),
-          SizedBox(width: 40),
-          Radio(
-            value: 4,
-            groupValue: settings.option,
-            onChanged: (value) =>
-                settings.handleRadioValueChange(value, contextScreen),
-          ),
-          Text("Alto-Contraste"),
-        ],
-      ),
-    );
+    return
+        Column(
+          children: [
+            Row(
+              children: [
+                Radio(
+                  value: 1,
+                  groupValue: settings.option,
+                  onChanged: (value) =>
+                      settings.handleRadioValueChange(value, contextScreen),
+                ),
+                Text("Sistema"),
+              ],
+            ),
+            Row(
+              children: [
+                Radio(
+                  value: 2,
+                  groupValue: settings.option,
+                  onChanged: (value) =>
+                      settings.handleRadioValueChange(value, contextScreen),
+                ),
+                Text("Claro"),
+              ],
+            ),
+            Row(
+              children: [
+                Radio(
+                  value: 3,
+                  groupValue: settings.option,
+                  onChanged: (value) =>
+                      settings.handleRadioValueChange(value, contextScreen),
+                ),
+                Text("Escuro"),
+              ],
+            ),
+            Row(
+              children: [
+                Radio(
+                  value: 4,
+                  groupValue: settings.option,
+                  onChanged: (value) =>
+                      settings.handleRadioValueChange(value, contextScreen),
+                ),
+                Text("Alto-Contraste"),
+              ],
+            ),
+          ],
+        );
   }
 }

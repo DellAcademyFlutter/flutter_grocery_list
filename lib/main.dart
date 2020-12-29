@@ -32,10 +32,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-        animation: settings.themeModel,
+        animation: settings,
         builder: (context, w) {
           return AnimatedBuilder(
-              animation: settings,
+              animation: settings.themeModel,
               builder: (context, w) {
                 return MaterialApp(
                     title: 'Carrinho de compras',
