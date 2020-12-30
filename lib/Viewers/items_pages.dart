@@ -138,7 +138,7 @@ Widget getScrollableItemCard(BuildContext context, int index, bool itemType) {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         content: Text(
-                            "Você gostaria de remover: ${cart.itemList[index]} do carrinho?"),
+                            "Você gostaria de remover ${cart.itemList[index].name} do carrinho?"),
                         actions: <Widget>[
                           FlatButton(
                             child: Text(
